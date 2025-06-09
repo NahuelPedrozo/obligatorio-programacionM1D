@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obligatorio Programacion</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+    <!--Comienza contenedor general-->
+    <div id="contenedor">
+
+        <!--Comienza Header-->
+        <header>
+            <img id="logo" src="https://p1.develotion.com/logo.jpg" alt="logo" />
+            <nav>
+                <ul id="navPrincipal">
+                    <li>
+                        <a>Sección 1</a>
+                    </li>
+                    <li>
+                        <a>Sección 2</a>
+                    </li>
+                    <li>
+                        <a>Sección 3</a>
+                    </li>
+                    <li class="pagina-usuario pagina-paseador">
+                        <a id="btnlogout">Cerrar Sesion</a>
+                    </li>
+                </ul>
+            </nav>
+            <!--Termina Header-->
+        </header>
+        <main>
+            <!--Comienza Div Login-->
+<div id= "divLogin" class="pagina-usuario pagina-usuario">
+    <label for="txtLoginUsuario">Usuario</label>
+<input type="text" value="pedro@pedro.pedro" id="txtLoginUsuario">
+
+<label for="txtLoginPassword">Contraseña</label>
+<input type="text" value="...1234..." id="txtLoginPassword">
+<br>
+
+<p id="pErroresLogin"></p>
+<button id="btnLogin">Ingresar</button>
+<!--Fin Div Login-->
+</div>
+
+
+<!--Div Pagina Principal Usuario-->
+<div id="divPaginaUsuario" class="pagina-usuario">
+<h1 id="hPaginaUsuario">Bienvenido</h1>
+    <!--Fin Div Pagina Principal Usuario-->
+</div>
+        </main>
+        <!-- FIN CONTENIDO -->
+        <footer>
+            <a href="https://www.ort.edu.uy">Footer</a>
+        </footer>
+        <!-- FIN PIE -->
+
+
+        <!--Termina contenedor general-->
+    </div>
+
+
+    <script src="js/codigo.js"></script>
+</body>
+
+</html>
