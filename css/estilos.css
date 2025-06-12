@@ -111,7 +111,7 @@ table img {
   max-width: 100px;
 }
 
-td > input[type="button"] {
+td > input[type="button"], button {
   max-width: 150px;
   font-size: 12px;
 }
