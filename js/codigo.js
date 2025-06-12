@@ -45,19 +45,80 @@ function Login() {
  * - no deberia existir en sistema (case insensitive)
  * - no puede contener espacios
  * - el mail debe tener un solo arroba 
- * - el mail debe tener un punto despues del arroba
+ * 
  * - edad >= 18
  * - password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo
  *
  */
 function registrarUsuario (){
 
+    document.querySelector("#pErroresRegistro").innerHTML = "";
+
 let nombreIngresado = document.querySelector("#txtRegistroUsuarioNombre").value;
 let edadIngresado = Number(document.querySelector("#txtRegistroUsuarioEdad").value);
 let mailIngresado = document.querySelector("#txtRegistroUsuarioMail").value;
 let passIngresadoRegistro = document.querySelector("#txtRegisgtroUsuarioPass").value;
 
+let errores = "";
 
+if(existeUsuario(nombreIngresado)){
+    errores += "<br> El nombre de usuario no está disponible";
+}
+
+if(nombreIngresado.indexOf(" " >= 0)){
+    errores += "<br> El nombre de usuario no puede contener espacios";
+}
+
+if(mailIngresado.indexOf("@") < 0 || (mailIngresado.indexOf("@") 
+    !== mailIngresado.lastIndexOf("@"))){
+    errores += "<br> El Mial solo puede contener un arroba";
+}
+if(edadIngresado < 18){
+errores += "<br>Debes ser mayor de edad"
+}
+if(!esUnPasswordValido(passIngresado)){
+    errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
+}
+/**si no hubo errores, registrar, si no mostrar mensaje  */
+if(errores.lenght === 0){
+    //guardar elemento en el array
+listaDeUsuarios.push(mailIngresado);
+passwordsDeUsuarios.push(passIngresado);
+volverAlLogin();
+}else{
+    document.querySelector("#pErroresRegistro").innerHTML = errores;
+}
+}
+
+function esUnPasswordValido (pPass){
+let tieneNumero = false;
+let tieneCaracterEspecial = false;
+
+let tieneMayuscula = false;
+let tieneMinuscula = false;
+
+let i = 0;
+
+while((!tieneMayuscula || !tieneMinuscula ||!tieneNumero || !tieneCaracterEspecial ) && i < pPass.length){
+    if(pPass.charAt(i) >= 48 && pPass.charCodeAt(i) <= 57){
+        tieneNumero = true;
+    }else if(
+        pPass.charCodeAt(i) >= 33 && pPass.charCodeAt(i) <= 47 ||
+        pPass.charCodeAt(i) >= 58 && pPass.charCodeAt(i) <= 64 ||
+        pPass.charCodeAt(i) >= 94 && pPass.charCodeAt(i) <= 96 ||
+        pPass.charCodeAt(i) >= 123
+){
+    tieneCaracterEspecial = true;
+} else if(pPass.charAt(i) >= 65 && pPass.charCodeAt(i) <= 90){
+    tieneMayuscula = true;
+} 
+else if(pPass.charAt(i) >= 97 && pPass.charCodeAt(i) <= 122){
+    tieneMinuscula = true;
+}
+i++
+
+}
+return tieneNumero && tieneCaracterEspecial && pPass.length >= 8 && tieneMayuscula && tieneMinuscula;
 }
 
 function logout() {
@@ -71,6 +132,21 @@ function logout() {
 
 }
 
+
+function existeUsuario(pUsuario){
+    // bandera para saber paseador
+    let existe = false;
+
+    let i = 0;
+
+    while (!existe && i < listaDeUsuarios.length) {
+        if (listaDeUsuarios[i].toUpperCase() === pUsuario.toUpperCase()) {
+            existe = true;
+        }
+        i++;
+    }
+    return existe;
+}
 
 function elUsuarioEsCorrecto(pUsuario, pPass) {
     // Bandera va a cambiar a TRUE cuando encuentre el usuario (si lo encuentra) 
@@ -94,7 +170,7 @@ function elUsuarioEsCorrecto(pUsuario, pPass) {
     return false;
 }
 /**
- * comprueba si el usuario es artista
+ * comprueba si el usuario es paseador
  * @param {String} pNombre 
  * @returns {Boolean} resultado
  */
@@ -147,4 +223,13 @@ function motrarPaginaRegistro (){
 
 function volverAlLogin(){
     logout();
+}
+
+function prueba1(){
+
+
+}
+
+function prueba2(){
+
 }
