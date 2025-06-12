@@ -200,6 +200,7 @@ function iniciarAplicacion() {
 
 
 /**
+ * TEST - github
  * Oculta los divs de login y muestra los correspondientes al usuario
  * @param {String} pNombre 
  */
