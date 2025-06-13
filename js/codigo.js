@@ -225,12 +225,3 @@ function motrarPaginaRegistro (){
 function volverAlLogin(){
     logout();
 }
-
-function prueba1(){
-
-
-}
-
-function prueba2(){
-
-}
