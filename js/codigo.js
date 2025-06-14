@@ -2,12 +2,16 @@
 vARIABLES GLOBALES, CONSTANTES GLOBALES 
 */
 
-// Opcion A - Arrays Coordinados
-let listaDeUsuarios = ["paseador", "pedro@pedro.pedro", "jose@pedro.pedro"];
-let passwordsDeUsuarios = ["perros", "...1234...", "soyElJose"];
+/* 
+Genero un sistema para poder manejar todos mis datos.
+*/
 
-// Opcion B
-let listaDePaseadores = new Array("paseador");
+const SISTEMA = new Sistema("Mi app");
+//EJECUTAMOS LA PRECARGA ENSEGUIDA DE CREAR EL SISTEMA
+SISTEMA.precargarDatos();
+
+
+
 
 /*
 FUNCIONES PARA EL INICIO
@@ -20,9 +24,9 @@ EVENTOS
 */
 document.querySelector("#btnLogin").addEventListener("click", Login);
 document.querySelector("#btnlogout").addEventListener("click", logout);
-document.querySelector("#btnRegistrarse").addEventListener("click", motrarPaginaRegistro)
-document.querySelector("btnCancelarRegistro").addEventListener("click", volverAlLogin)
-document.querySelector("#btnRegistro").addEventListener("click", registrarUsuario)
+document.querySelector("#btnRegistrarse").addEventListener("click", mostrarPaginaRegistro);
+document.querySelector("btnCancelarRegistro").addEventListener("click", volverAlLogin);
+document.querySelector("#btnRegistro").addEventListener("click", registrarUsuario);
 
 function Login() {
     //Limpia ERRORES
@@ -33,7 +37,7 @@ function Login() {
     let usuarioIngresado = document.querySelector("#txtLoginUsuario").value;
     let passIngresado = document.querySelector("#txtLoginPassword").value;
 
-    if (elUsuarioEsCorrecto(usuarioIngresado, passIngresado)) {
+    if (SISTEMA.elUsuarioEsCorrecto(usuarioIngresado, passIngresado)) {
         loginExitoso(usuarioIngresado);
     } else {
         document.querySelector("#pErroresLogin").innerHTML = "Usuario o contraseña incorrectos";
@@ -61,7 +65,7 @@ let passIngresadoRegistro = document.querySelector("#txtRegisgtroUsuarioPass").v
 
 let errores = "";
 
-if(existeUsuario(nombreIngresado)){
+if(SISTEMA.existeUsuario(nombreIngresado)){
     errores += "<br> El nombre de usuario no está disponible";
 }
 
@@ -76,50 +80,18 @@ if(mailIngresado.indexOf("@") < 0 || (mailIngresado.indexOf("@")
 if(edadIngresado < 18){
 errores += "<br>Debes ser mayor de edad"
 }
-if(!esUnPasswordValido(passIngresado)){
+if(!SISTEMA.esUnPasswordValido(passIngresado)){
     errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
 }
 /**si no hubo errores, registrar, si no mostrar mensaje  */
 if(errores.lenght === 0){
-    //guardar elemento en el array
-listaDeUsuarios.push(mailIngresado);
-passwordsDeUsuarios.push(passIngresado);
-volverAlLogin();
+    SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false);
+    volverAlLogin();
 }else{
     document.querySelector("#pErroresRegistro").innerHTML = errores;
 }
 }
 
-function esUnPasswordValido (pPass){
-let tieneNumero = false;
-let tieneCaracterEspecial = false;
-
-let tieneMayuscula = false;
-let tieneMinuscula = false;
-
-let i = 0;
-
-while((!tieneMayuscula || !tieneMinuscula ||!tieneNumero || !tieneCaracterEspecial ) && i < pPass.length){
-    if(pPass.charAt(i) >= 48 && pPass.charCodeAt(i) <= 57){
-        tieneNumero = true;
-    }else if(
-        pPass.charCodeAt(i) >= 33 && pPass.charCodeAt(i) <= 47 ||
-        pPass.charCodeAt(i) >= 58 && pPass.charCodeAt(i) <= 64 ||
-        pPass.charCodeAt(i) >= 94 && pPass.charCodeAt(i) <= 96 ||
-        pPass.charCodeAt(i) >= 123
-){
-    tieneCaracterEspecial = true;
-} else if(pPass.charAt(i) >= 65 && pPass.charCodeAt(i) <= 90){
-    tieneMayuscula = true;
-} 
-else if(pPass.charAt(i) >= 97 && pPass.charCodeAt(i) <= 122){
-    tieneMinuscula = true;
-}
-i++
-
-}
-return tieneNumero && tieneCaracterEspecial && pPass.length >= 8 && tieneMayuscula && tieneMinuscula;
-}
 
 function logout() {
     document.querySelector("#txtLoginPassword").value = "";
@@ -132,62 +104,6 @@ function logout() {
 
 }
 
-
-function existeUsuario(pUsuario){
-    // bandera para saber paseador
-    let existe = false;
-
-    let i = 0;
-
-    while (!existe && i < listaDeUsuarios.length) {
-        if (listaDeUsuarios[i].toUpperCase() === pUsuario.toUpperCase()) {
-            existe = true;
-        }
-        i++;
-    }
-    return existe;
-}
-
-function elUsuarioEsCorrecto(pUsuario, pPass) {
-    // Bandera va a cambiar a TRUE cuando encuentre el usuario (si lo encuentra) 
-    let usuarioEncontrado = false;
-
-    // indice para recorrer
-    let i = 0;
-    while (!usuarioEncontrado && i < listaDeUsuarios.length) {
-        if (listaDeUsuarios[i] === pUsuario) {
-            usuarioEncontrado = true;
-        } else {
-            i++;
-        }
-
-    }
-    if (usuarioEncontrado) {
-        if (passwordsDeUsuarios[i] === pPass) {
-            return true;
-        }
-    }
-    return false;
-}
-/**
- * comprueba si el usuario es paseador
- * @param {String} pNombre 
- * @returns {Boolean} resultado
- */
-function esPaseador(pNombre) {
-    // bandera para saber paseador
-    let usuarioEsPaseador = false;
-
-    let i = 0;
-
-    while (!usuarioEsPaseador && i < listaDePaseadores.length) {
-        if (listaDePaseadores[i] === pNombre) {
-            usuarioEsPaseador = true;
-        }
-        i++;
-    }
-    return usuarioEsPaseador;
-}
 
 /**
  * Ocultatodo lo que no es visible al entrar en la pagina 
@@ -208,7 +124,7 @@ function loginExitoso(pNombre) {
         document.querySelector("#txtLoginUsuario").value = "";
         document.querySelector("#divLogin").style.display = "none";
 
-    if (esPaseador(pNombre)) {
+    if (SISTEMA.esPaseador(pNombre)) {
 
         document.querySelector("#divPaginaUsuario").style.display = "block";
 
@@ -217,7 +133,7 @@ function loginExitoso(pNombre) {
     }
 }
 
-function motrarPaginaRegistro (){
+function mostrarPaginaRegistro (){
      document.querySelector("#login").style.display = "none";
       document.querySelector("#divRegistro").style.display = "block";
 }
