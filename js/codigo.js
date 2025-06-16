@@ -9,17 +9,18 @@ Genero un sistema para poder manejar todos mis datos.
 const SISTEMA = new Sistema("Mi app");
 //EJECUTAMOS LA PRECARGA ENSEGUIDA DE CREAR EL SISTEMA
 SISTEMA.precargarDatos();
-
-
+// DEJAMOS UN USUARIO PARA LOGUAR FACIL
+document.querySelector("#txtLoginUsuario").value = SISTEMA.usuarios[0].mail;
+document.querySelector("#txtLoginPassword").value = SISTEMA.usuarios[0].password;
 
 
 /*
 FUNCIONES PARA EL INICIO
 */
-iniciarAplicacion()
-
-
+iniciarAplicacion();
 /*
+
+
 EVENTOS 
 */
 document.querySelector("#btnLogin").addEventListener("click", Login);
@@ -54,42 +55,23 @@ function Login() {
  * - password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo
  *
  */
-function registrarUsuario (){
+function registrarUsuario() {
 
     document.querySelector("#pErroresRegistro").innerHTML = "";
 
-let nombreIngresado = document.querySelector("#txtRegistroUsuarioNombre").value;
-let edadIngresado = Number(document.querySelector("#txtRegistroUsuarioEdad").value);
-let mailIngresado = document.querySelector("#txtRegistroUsuarioMail").value;
-let passIngresadoRegistro = document.querySelector("#txtRegistroUsuarioPass").value;
+    let nombreIngresado = document.querySelector("#txtRegistroUsuarioNombre").value;
+    let edadIngresado = Number(document.querySelector("#txtRegistroUsuarioEdad").value);
+    let mailIngresado = document.querySelector("#txtRegistroUsuarioMail").value;
+    let passIngresado = document.querySelector("#txtRegistroUsuarioPass").value;
 
-let errores = "";
+    let erroresAlAgregregarUsuario = SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false);
+    /**si no hubo errores, registrar, si no mostrar mensaje  */
+    if (erroresAlAgregregarUsuario.length === 0) {
 
-if(SISTEMA.existeUsuario(nombreIngresado)){
-    errores += "<br> El nombre de usuario no está disponible";
-}
-
-if(nombreIngresado.indexOf(" ") >= 0){
-    errores += "<br> El nombre de usuario no puede contener espacios";
-}
-
-if(mailIngresado.indexOf("@") < 0 || (mailIngresado.indexOf("@") 
-    !== mailIngresado.lastIndexOf("@"))){
-    errores += "<br> El Mial solo puede contener un arroba";
-}
-if(edadIngresado < 18){
-errores += "<br>Debes ser mayor de edad"
-}
-if(!SISTEMA.esUnPasswordValido(passIngresadoRegistro)){
-    errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
-}
-/**si no hubo errores, registrar, si no mostrar mensaje  */
-if(errores.length === 0){
-    SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresadoRegistro, false);
-    volverAlLogin();
-}else{
-    document.querySelector("#pErroresRegistro").innerHTML = errores;
-}
+        volverAlLogin();
+    } else {
+        document.querySelector("#pErroresRegistro").innerHTML = errores;
+    }
 }
 
 
@@ -99,19 +81,33 @@ function logout() {
     document.querySelector("#pErroresLogin").innerHTML = "";
     document.querySelector("#divPaginaUsuario").style.display = "none";
     document.querySelector("#divLogin").style.display = "block";
- document.querySelector("#divPaginaPaseador").style.display = "none";
- document.querySelector("#divRegistro").style.display = "none";
+    document.querySelector("#divPaginaPaseador").style.display = "none";
+    document.querySelector("#divRegistro").style.display = "none";
+    let botonesUsuario = document.querySelectorAll(".nav-usuario");
+    let botonesPaseador = document.querySelectorAll(".nav-paseador");
+
+    for(let i=0; i < botonesUsuario.length;i++){
+        let item = botonesUsuario[i];
+        item.style.display  ="none";
+    }
+
+    
+    for(let i=0; i < botonesPaseador.length;i++){
+        let item = botonesPaseador[i];
+        item.style.display  ="none";
+    }
 
 }
 
 
-/**
- * Ocultatodo lo que no es visible al entrar en la pagina 
+/*
+ Ocultatodo lo que no es visible al entrar en la pagina 
  */
 function iniciarAplicacion() {
     document.querySelector("#divPaginaUsuario").style.display = "none";
     document.querySelector("#divPaginaPaseador").style.display = "none";
     document.querySelector("#divRegistro").style.display = "none";
+    document.querySelector("#navPrincipal").style.display = "none";
 }
 
 
@@ -121,8 +117,9 @@ function iniciarAplicacion() {
  * @param {String} pNombre 
  */
 function loginExitoso(pNombre) {
-        document.querySelector("#txtLoginUsuario").value = "";
-        document.querySelector("#divLogin").style.display = "none";
+    document.querySelector("#txtLoginUsuario").value = "";
+    document.querySelector("#divLogin").style.display = "none";
+    document.querySelector("#navPrincipal").style.display = "block";
 
     if (SISTEMA.esPaseador(pNombre)) {
 
@@ -133,11 +130,11 @@ function loginExitoso(pNombre) {
     }
 }
 
-function mostrarPaginaRegistro (){
-     document.querySelector("#divLogin").style.display = "none";
-      document.querySelector("#divRegistro").style.display = "block";
+function mostrarPaginaRegistro() {
+    document.querySelector("#divLogin").style.display = "none";
+    document.querySelector("#divRegistro").style.display = "block";
 }
 
-function volverAlLogin(){
+function volverAlLogin() {
     logout();
 }

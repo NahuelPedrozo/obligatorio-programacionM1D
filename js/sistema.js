@@ -16,74 +16,74 @@ class Sistema {
 /**
  * Comprueba que el usuario existe y si existe comprueba que coincida el password.
  * 
- * @param {string} pUsuario 
+ * @param {string} pMail
  * @param {*string} pPass 
  * @returns {Boolean}
  */
 
- elUsuarioEsCorrecto(pUsuario, pPass) {
-    // Bandera va a cambiar a TRUE cuando encuentre el usuario (si lo encuentra) 
-    let usuarioEncontrado = false;
+ elUsuarioEsCorrecto(pMail, pPass) {
+   
+    let unUsuario = this.buscarUnUsuarioPorMail(pMail);
 
-    // indice para recorrer
-    let i = 0;
-    while (!usuarioEncontrado && i < this.usuarios.length) {
-        if (this.usuarios[i] === pUsuario) {
-            usuarioEncontrado = true;
-        } else {
-            i++;
-        }
-
+    if(unUsuario !== null && unUsuario.password === pPass){
+        return true;
+    }else{
+        return false
     }
-    if (usuarioEncontrado) {
-        if (this.passwords[i] === pPass) {
-            return true;
-        }
-    }
-    return false;
 }
 
 
 
 /**
  * comprueba si el usuario es paseador
- * @param {String} pNombre 
+ * @param {String} pMail 
  * @returns {Boolean} resultado
  */
- esPaseador(pNombre) {
-    // bandera para saber paseador
-    let usuarioEsPaseador = false;
+ esPaseador(pMail) {
+    
+    let usuario = this.buscarUnUsuarioPorMail(pMail);
+
+    if(usuario !== null){
+        return usuario.esPaseador;
+    }else{
+        return false;
+    }
+}
+/**
+ * retorna Null si el usuario no existe
+ * @param {string} pMail 
+ * @returns 
+ */
+buscarUnUsuarioPorMail(pMail){
+      /**Vamos a usar una variable que empieza en null y si en algun momento encuentra el valor 
+       * que estoy buscando, va a rellenar ese valor.
+       */
+    let usuarioEncontrado = null;
 
     let i = 0;
 
-    while (!usuarioEsPaseador && i < this.listaDePaseadores.length) {
-        if (this.listaDePaseadores[i] === pNombre) {
-            usuarioEsPaseador = true;
+    while (usuarioEncontrado === null && i < this.usuarios.length) {
+        if (this.usuarios[i].mail.toUpperCase() === pMail.toUpperCase()) {
+            usuarioEncontrado = this.usuarios[i];
         }
         i++;
     }
-    return usuarioEsPaseador;
+    return usuarioEncontrado;
 }
-
 
 /**
  * 
- * @param {String} pUsuario 
+ * @param {String} pMail
  * @returns {boolean} retorna true si el usuario existe 
  */
- existeUsuario(pUsuario){
-    // bandera para saber paseador
-    let existe = false;
+ existeUsuario(pMail){
 
-    let i = 0;
-
-    while (!existe && i < this.usuarios.length) {
-        if (this.usuarios[i].toUpperCase() === pUsuario.toUpperCase()) {
-            existe = true;
-        }
-        i++;
+    let unUsuario = this.buscarUnUsuarioPorMail(pMail);
+    if(unUsuario === null){
+        return false;
+    }else{
+        return true;
     }
-    return existe;
 }
 
 
@@ -98,7 +98,7 @@ let tieneMinuscula = false;
 let i = 0;
 
 while((!tieneMayuscula || !tieneMinuscula ||!tieneNumero || !tieneCaracterEspecial ) && i < pPass.length){
-    if(pPass.charAt(i) >= 48 && pPass.charCodeAt(i) <= 57){
+    if(pPass.charCodeAt(i) >= 48 && pPass.charCodeAt(i) <= 57){
         tieneNumero = true;
     }else if(
         pPass.charCodeAt(i) >= 33 && pPass.charCodeAt(i) <= 47 ||
@@ -107,10 +107,10 @@ while((!tieneMayuscula || !tieneMinuscula ||!tieneNumero || !tieneCaracterEspeci
         pPass.charCodeAt(i) >= 123
 ){
     tieneCaracterEspecial = true;
-} else if(pPass.charAt(i) >= 65 && pPass.charCodeAt(i) <= 90){
+} else if(pPass.charCodeAt(i) >= 65 && pPass.charCodeAt(i) <= 90){
     tieneMayuscula = true;
 } 
-else if(pPass.charAt(i) >= 97 && pPass.charCodeAt(i) <= 122){
+else if(pPass.charCodeAt(i) >= 97 && pPass.charCodeAt(i) <= 122){
     tieneMinuscula = true;
 }
 i++
@@ -122,9 +122,41 @@ return (tieneNumero && tieneCaracterEspecial && pPass.length >= 8 && tieneMayusc
 
 
 agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador){
+
+    let errores = this.validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword);
+
+    if(errores.length === 0){
     let unUsuario = new Usuario(pNombre, pEdad, pMail, pPassword, pEsPaseador);
     this.usuarios.push(unUsuario);
+    }
+    return errores;
+
     
+    
+}
+
+validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword){
+   let errores = "";
+
+if(this.existeUsuario(pMail)){
+    errores += "<br> El mail de usuario no está disponible";
+}
+
+if(pNombre.indexOf(" ") >= 0){
+    errores += "<br> El nombre de usuario no puede contener espacios";
+}
+
+if(pMail.indexOf("@") < 0 || (pMail.indexOf("@") 
+    !== pMail.lastIndexOf("@"))){
+    errores += "<br> El Mial solo puede contener un arroba";
+}
+if(pEdad < 18){
+errores += "<br>Debes ser mayor de edad"
+}
+if(!this.esUnPasswordValido(pPassword)){
+    errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
+} 
+return errores;
 }
 
 
@@ -141,7 +173,22 @@ agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador){
 
     */
 
-    precargarDatos (){
+  precargarDatos() {
 
-    }
+    let usuarioAgregadoLinea = 0;
+    /** Precargo usuarios comunes */
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Ana-López", 28, "ana@gmail.com", "Ana1234!", false));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Carlos-Méndez", 35, "carlos@gmail.com", "Carl0s@2024", false));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Lucía-Torres", 22, "lucia@gmail.com", "Lucia!789", false));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Dieg-Pérez", 30, "diego@gmail.com", "D!ego2025", false));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Florencia-Ruiz", 26, "flor@gmail.com", "Flor#2023", false));
+
+    /** Precargo paseadores */
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Matías-Díaz", 29, "matiasp@gmail.com", "Mati2024!", true));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Sofía-Varela", 32, "sofiap@gmail.com", "Sofi@123", true));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Tomás-Suárez", 27, "tomasp@gmail.com", "Tom@2025", true));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Valentina-Costa", 24, "valenp@gmail.com", "Vale!456", true));
+    console.log(usuarioAgregadoLinea++, " ",this.agregarUsuario("Joaquín-Morales", 31, "joaquinp@gmail.com", "Joaq#789", true));
+}
+
 }
