@@ -36,7 +36,7 @@ class Perro{
 }
 
 
-
+// HOLAA
 class Paseo{
     constructor(perro, paseador, estado){
         this.estado = estado;
