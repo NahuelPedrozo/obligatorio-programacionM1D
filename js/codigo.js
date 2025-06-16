@@ -25,7 +25,7 @@ EVENTOS
 document.querySelector("#btnLogin").addEventListener("click", Login);
 document.querySelector("#btnlogout").addEventListener("click", logout);
 document.querySelector("#btnRegistrarse").addEventListener("click", mostrarPaginaRegistro);
-document.querySelector("btnCancelarRegistro").addEventListener("click", volverAlLogin);
+document.querySelector("#btnCancelarRegistro").addEventListener("click", volverAlLogin);
 document.querySelector("#btnRegistro").addEventListener("click", registrarUsuario);
 
 function Login() {
@@ -61,7 +61,7 @@ function registrarUsuario (){
 let nombreIngresado = document.querySelector("#txtRegistroUsuarioNombre").value;
 let edadIngresado = Number(document.querySelector("#txtRegistroUsuarioEdad").value);
 let mailIngresado = document.querySelector("#txtRegistroUsuarioMail").value;
-let passIngresadoRegistro = document.querySelector("#txtRegisgtroUsuarioPass").value;
+let passIngresadoRegistro = document.querySelector("#txtRegistroUsuarioPass").value;
 
 let errores = "";
 
@@ -69,7 +69,7 @@ if(SISTEMA.existeUsuario(nombreIngresado)){
     errores += "<br> El nombre de usuario no está disponible";
 }
 
-if(nombreIngresado.indexOf(" " >= 0)){
+if(nombreIngresado.indexOf(" ") >= 0){
     errores += "<br> El nombre de usuario no puede contener espacios";
 }
 
@@ -80,12 +80,12 @@ if(mailIngresado.indexOf("@") < 0 || (mailIngresado.indexOf("@")
 if(edadIngresado < 18){
 errores += "<br>Debes ser mayor de edad"
 }
-if(!SISTEMA.esUnPasswordValido(passIngresado)){
+if(!SISTEMA.esUnPasswordValido(passIngresadoRegistro)){
     errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
 }
 /**si no hubo errores, registrar, si no mostrar mensaje  */
-if(errores.lenght === 0){
-    SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false);
+if(errores.length === 0){
+    SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresadoRegistro, false);
     volverAlLogin();
 }else{
     document.querySelector("#pErroresRegistro").innerHTML = errores;
@@ -134,7 +134,7 @@ function loginExitoso(pNombre) {
 }
 
 function mostrarPaginaRegistro (){
-     document.querySelector("#login").style.display = "none";
+     document.querySelector("#divLogin").style.display = "none";
       document.querySelector("#divRegistro").style.display = "block";
 }
 
