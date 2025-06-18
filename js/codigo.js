@@ -64,7 +64,10 @@ function registrarUsuario() {
     let mailIngresado = document.querySelector("#txtRegistroUsuarioMail").value;
     let passIngresado = document.querySelector("#txtRegistroUsuarioPass").value;
 
-    let erroresAlAgregregarUsuario = SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false);
+    let nombrePerroIngresado = document.querySelector("#txtRegistroUsuarioPerro").value.trim();
+    let tamanoPerroIngresado = document.querySelector("#slcRegistroUsuarioTamanho").value;
+
+    let erroresAlAgregregarUsuario = SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false, nombrePerroIngresado, tamanoPerroIngresado);
     /**si no hubo errores, registrar, si no mostrar mensaje  */
     if (erroresAlAgregregarUsuario.length === 0) {
 
@@ -138,3 +141,4 @@ function mostrarPaginaRegistro() {
 function volverAlLogin() {
     logout();
 }
+// Cambios probar.

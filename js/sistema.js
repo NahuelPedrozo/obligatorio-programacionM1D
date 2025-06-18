@@ -121,12 +121,12 @@ return (tieneNumero && tieneCaracterEspecial && pPass.length >= 8 && tieneMayusc
 
 
 
-agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador){
+agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador, pNombrePerro, pTamanoPerro){
 
-    let errores = this.validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword);
+    let errores = this.validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword, pNombrePerro, pTamanoPerro);
 
     if(errores.length === 0){
-    let unUsuario = new Usuario(pNombre, pEdad, pMail, pPassword, pEsPaseador);
+    let unUsuario = new Usuario(pNombre, pEdad, pMail, pPassword, pEsPaseador, pNombrePerro, pTamanoPerro);
     this.usuarios.push(unUsuario);
     }
     return errores;
@@ -135,7 +135,7 @@ agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador){
     
 }
 
-validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword){
+validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword, pNombrePerro, pTamanoPerro){
    let errores = "";
 
 if(this.existeUsuario(pMail)){
@@ -156,6 +156,12 @@ errores += "<br>Debes ser mayor de edad"
 if(!this.esUnPasswordValido(pPassword)){
     errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
 } 
+  if (pNombrePerro === "") {
+        errores += "Debe ingresar el nombre del perro.<br>";
+    }
+     if (pTamanoPerro === "") {
+        errores += "Debe seleccionar un tamaño de perro.<br>";
+    }
 return errores;
 }
 
