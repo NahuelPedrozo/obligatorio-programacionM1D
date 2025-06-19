@@ -28,6 +28,7 @@ document.querySelector("#btnlogout").addEventListener("click", logout);
 document.querySelector("#btnRegistrarse").addEventListener("click", mostrarPaginaRegistro);
 document.querySelector("#btnCancelarRegistro").addEventListener("click", volverAlLogin);
 document.querySelector("#btnRegistro").addEventListener("click", registrarUsuario);
+document.querySelector(`#btnVerPaseadoresDisponibles`).addEventListener (`click`, verPaseadoresDisponibles);
 
 function Login() {
     //Limpia ERRORES
@@ -142,3 +143,9 @@ function volverAlLogin() {
     logout();
 }
 // Cambios probar.
+
+function verPaseadoresDisponibles (){
+  
+    document.querySelector(`#divPaginaPaseador`).style.display = `none`;
+
+}
