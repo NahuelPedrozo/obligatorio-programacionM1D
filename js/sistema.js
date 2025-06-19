@@ -179,6 +179,21 @@ if(!this.esUnPasswordValido(pPassword)){
     return errores;
 }
 
+
+obtenerSoloPaseadores (){
+    let paseadores= [];
+
+    for (let i = 0; i < this.usuarios.length; i++){
+        let item = this.usuarios[i];
+        if (item.esPaseador){
+            paseadores.push(item);
+        }
+    }
+    return paseadores;
+}
+
+
+
     /* 
     ESTE METODO PRECARGA LOS DATOS DE LA APLICACION.
     DENTRO DE LA CLASE NO USAMOS LA PALABRA FUNCTION.

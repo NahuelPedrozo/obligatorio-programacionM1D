@@ -87,6 +87,7 @@ function logout() {
     document.querySelector("#divLogin").style.display = "block";
     document.querySelector("#divPaginaPaseador").style.display = "none";
     document.querySelector("#divRegistro").style.display = "none";
+    document.querySelector(`#divVerPaseadores`).style.display = `none`;
     let botonesUsuario = document.querySelectorAll(".nav-usuario");
     let botonesPaseador = document.querySelectorAll(".nav-paseador");
 
@@ -148,5 +149,10 @@ function volverAlLogin() {
 function verPaseadoresDisponibles (){
   
     document.querySelector(`#divPaginaPaseador`).style.display = `none`;
+     document.querySelector(`#divVerPaseadores`).style.display = `block`;
+}
 
+function cargarTablaPaseadores (){
+    let paseadores = Sistema.obtenerSoloPaseadores;
+    
 }
