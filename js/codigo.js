@@ -70,10 +70,10 @@ function registrarUsuario() {
     let erroresAlAgregregarUsuario = SISTEMA.agregarUsuario(nombreIngresado, edadIngresado, mailIngresado, passIngresado, false, nombrePerroIngresado, tamanoPerroIngresado);
     /**si no hubo errores, registrar, si no mostrar mensaje  */
     if (erroresAlAgregregarUsuario.length === 0) {
-
+        alert (`Usuario registrado.`);
         volverAlLogin();
     } else {
-        document.querySelector("#pErroresRegistro").innerHTML = errores;
+        document.querySelector("#pErroresRegistro").innerHTML = erroresAlAgregregarUsuario;
     }
 }
 

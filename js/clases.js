@@ -12,7 +12,7 @@ class Usuario {
      * @param {String} pPassword 
      * @param {Boolean} pEsPaseador
      */
-    constructor (pNombre, pEdad, pMail, pPassword, pEsPaseador, pNombrePerro = null, pTamanoPerro = null){
+    constructor (pNombre, pEdad, pMail, pPassword, pEsPaseador){
         this.id = ultimoIdUsuario++;
         this.nombre = pNombre;
         this.edad = pEdad;
@@ -20,12 +20,6 @@ class Usuario {
         this.password = pPassword;
         this.esPaseador = pEsPaseador;
         this.cupos = 10;
-
-         if (!pEsPaseador) {
-            this.nombrePerro = pNombrePerro;
-            this.tamanoPerro = pTamanoPerro;
-        }
-
     }
 }
 
