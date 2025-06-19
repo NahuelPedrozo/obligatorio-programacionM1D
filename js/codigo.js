@@ -112,6 +112,7 @@ function iniciarAplicacion() {
     document.querySelector("#divPaginaPaseador").style.display = "none";
     document.querySelector("#divRegistro").style.display = "none";
     document.querySelector("#navPrincipal").style.display = "none";
+    document.querySelector(`#divVerPaseadores`).style.display = `none`;
 }
 
 
