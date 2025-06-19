@@ -202,3 +202,5 @@ if(!this.esUnPasswordValido(pPassword)){
     console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Valentina-Costa", 24, "valenp@gmail.com", "Vale!456", true, null, null));
     console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Joaquín-Morales", 31, "joaquinp@gmail.com", "Joaq#789", true, null, null));
 }}
+
+//holaa
