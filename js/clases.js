@@ -36,12 +36,25 @@ class Perro{
 
 
 // HOLAA
-class Paseo{
+
+
+/* class Paseo{
     constructor(perro, paseador, estado){
         this.estado = estado;
         this.perro = perro;
         this.paseador = paseador;
     }
 }
+ */
 
+let ultimoIdContratacion = 1;
+
+class Contratacion {
+    constructor(perro, paseador, estado = "pendiente") {
+        this.id = ultimoIdContratacion++;
+        this.perro = perro;
+        this.paseador = paseador;
+        this.estado = estado;
+    }
+}
 

@@ -8,6 +8,7 @@ class Sistema {
     El constructor le dice a JavaScript como se tiene que ver un objeto.
     */
     constructor (pNombreAplicacion){
+        this.contrataciones = [];
         this.usuarios = [];
         this.perros = [];
         this.nombreAplicacion = pNombreAplicacion;
@@ -189,6 +190,72 @@ if(!this.esUnPasswordValido(pPassword)){
     }
     return paseadores
    }
+
+
+
+
+//Realizamos la contratacion 
+crearContratacion(perro, paseador) {
+    let cupoNecesario = this.obtenerCupoSegunTamaño(perro.tamanho);
+    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let tipoPermitido = this.tipoDePerrosPendientes(paseador);
+
+    if (tipoPermitido !== null && tipoPermitido !== perro.tamanho) {
+        return "No se puede contratar: ya hay perros de otro tamaño asignados.";
+    }
+
+    if (cupoNecesario > cuposRestantes) {
+        return "No hay cupos suficientes.";
+    }
+
+    let nueva = new Contratacion(perro, paseador);
+    this.contrataciones.push(nueva);
+    this.rechazarContratacionesIncompatibles(paseador);
+    return ""; // éxito
+}
+
+// obtenemos los cupos segun el tamaño
+obtenerCupoSegunTamaño(tam) {
+    if (tam === "tamanhoC") return 1;
+    if (tam === "tamanhoM") return 2;
+    if (tam === "tamanhoG") return 4;
+    return 0;
+}
+
+cuposYaOcupados(paseador) {
+    let total = 0;
+    for (let c of this.contrataciones) {
+        if (c.paseador === paseador && c.estado === "pendiente") {
+            total += this.obtenerCupoSegunTamaño(c.perro.tamanho);
+        }
+    }
+    return total;
+}
+
+tipoDePerrosPendientes(paseador) {
+    for (let c of this.contrataciones) {
+        if (c.paseador === paseador && c.estado === "pendiente") {
+            return c.perro.tamanho;
+        }
+    }
+    return null;
+}
+
+rechazarContratacionesIncompatibles(paseador) {
+    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let tipo = this.tipoDePerrosPendientes(paseador);
+
+    for (let c of this.contrataciones) {
+        if (c.paseador === paseador && c.estado === "pendiente") {
+            if (c.perro.tamanho !== tipo || this.obtenerCupoSegunTamaño(c.perro.tamanho) > cuposRestantes) {
+                c.estado = "rechazada";
+            }
+        }
+    }
+}
+
+
+
 
 
     /* 

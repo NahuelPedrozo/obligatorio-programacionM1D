@@ -166,5 +166,65 @@ function cargarTablaPaseadores(){
         </tr>`;
     }
     document.querySelector("#tPaseadores").innerHTML = raws;
-    // darEventoContratar(); // no lo hicimos aun
+
+    darEventoContratar(); 
+}
+
+function darEventoContratar (){
+  let botonesContratarPaseador = document.querySelectorAll(`.btnContratar`);
+
+    for (let i = 0; i < botonesContratarPaseador.length; i++){
+        let item = botonesContratarPaseador[i];
+        item.addEventListener(`click`, contratarPaseador);
+    }
+
+}
+
+    let mailLogueado = document.querySelector("#txtLoginUsuario").value;
+    let usuarioLogueado = SISTEMA.buscarUnUsuarioPorMail(mailLogueado);
+
+function contratarPaseador(evento) {
+    let idPaseador = Number(evento.target.getAttribute("data-paseador"));
+    let paseador = null;
+if (usuarioLogueado === null) {
+    alert("No se pudo encontrar el usuario logueado.");
+    return;
+}
+    for (let i = 0; i < SISTEMA.usuarios.length; i++) {
+        if (SISTEMA.usuarios[i].id === idPaseador) {
+            paseador = SISTEMA.usuarios[i];
+        }
+    }
+
+    // Validar si ya tiene una contratación pendiente
+    for (let i = 0; i < SISTEMA.contrataciones.length; i++) {
+        let item = SISTEMA.contrataciones[i];
+        if (item.perro.duenho.id === usuarioLogueado.id && item.estado === "pendiente") {
+            alert("Ya tiene una contratación pendiente. Debe cancelarla o esperar una respuesta.");
+            return;
+        }
+    }
+
+    // Buscar perro del usuario
+    let perroDelUsuario = null;
+    for (let i = 0; i < SISTEMA.perros.length; i++) {
+        if (SISTEMA.perros[i].duenho.id === usuarioLogueado.id) {
+            perroDelUsuario = SISTEMA.perros[i];
+        }
+    }
+
+    // Validar que el cliente tiene perro
+    if (perroDelUsuario === null) {
+        alert("No se encontró un perro asociado al usuario.");
+        return;
+    }
+
+    let resultado = SISTEMA.crearContratacion(perroDelUsuario, paseador);
+
+    if (resultado === "") {
+        alert("Contratación realizada con éxito.");
+        cargarTablaPaseadores(); // para actualizar cupos visibles
+    } else {
+        alert("Error al contratar: " + resultado);
+    }
 }
