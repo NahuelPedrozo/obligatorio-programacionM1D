@@ -178,31 +178,28 @@ if(!this.esUnPasswordValido(pPassword)){
 
     return errores;
 }
-
-
-obtenerSoloPaseadores (){
-    let paseadores= [];
-
-    for (let i = 0; i < this.usuarios.length; i++){
+//**Obtenemos solo los paseadores para los datos de la tabla  */
+ obtenerSoloPaseadores(){
+    let paseadores = [];
+    for(let i = 0; i <this.usuarios.length; i++){
         let item = this.usuarios[i];
-        if (item.esPaseador){
+        if(item.esPaseador){
             paseadores.push(item);
         }
     }
-    return paseadores;
-}
-
+    return paseadores
+   }
 
 
     /* 
     ESTE METODO PRECARGA LOS DATOS DE LA APLICACION.
     DENTRO DE LA CLASE NO USAMOS LA PALABRA FUNCTION.
-
     */
-
+   
   precargarDatos() {
     let usuarioAgregadoLinea = 0;
 
+    
     /** Precargo usuarios comunes (con perro y tamaño) */
     console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Ana-López", 28, "ana@gmail.com", "Ana1234!", false, "Firulais", "tamanhoM"));
     console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Carlos-Méndez", 35, "carlos@gmail.com", "Carl0s@2024", false, "Max", "tamanhoG"));

@@ -140,7 +140,7 @@ function mostrarPaginaRegistro() {
     document.querySelector("#divLogin").style.display = "none";
     document.querySelector("#divRegistro").style.display = "block";
 }
-
+//function para cerrar sesion
 function volverAlLogin() {
     logout();
 }
@@ -150,9 +150,21 @@ function verPaseadoresDisponibles (){
   
     document.querySelector(`#divPaginaPaseador`).style.display = `none`;
      document.querySelector(`#divVerPaseadores`).style.display = `block`;
+      cargarTablaPaseadores(); // Llena la tabla
 }
 
-function cargarTablaPaseadores (){
-    let paseadores = Sistema.obtenerSoloPaseadores;
-    
+function cargarTablaPaseadores(){
+    let paseadores = SISTEMA.obtenerSoloPaseadores();
+    let raws = "";
+    for(let i = 0; i < paseadores.length; i++){
+        let item = paseadores[i];
+        raws += `<tr>
+            <td>${item.nombre}</td>
+            <td>${item.mail}</td>
+            <td>${item.cupos}</td>
+            <td><button data-paseador="${item.id}" class="btnContratar">Contratar</button></td>
+        </tr>`;
+    }
+    document.querySelector("#tPaseadores").innerHTML = raws;
+    // darEventoContratar(); // no lo hicimos aun
 }
