@@ -127,12 +127,16 @@ function loginExitoso(pNombre) {
     document.querySelector("#divLogin").style.display = "none";
     document.querySelector("#navPrincipal").style.display = "block";
 
+    // Ocultar todos por las dudas
+    document.querySelector("#divPaginaUsuario").style.display = "none";
+    document.querySelector("#divPaginaPaseador").style.display = "none";
+    document.querySelector("#divRegistro").style.display = "none";
+    document.querySelector(`#divVerPaseadores`).style.display = `none`;
+
     if (SISTEMA.esPaseador(pNombre)) {
-
-        document.querySelector("#divPaginaUsuario").style.display = "block";
-
-    } else {
         document.querySelector("#divPaginaPaseador").style.display = "block";
+    } else {
+        document.querySelector("#divPaginaUsuario").style.display = "block";
     }
 }
 
@@ -148,7 +152,7 @@ function volverAlLogin() {
 
 function verPaseadoresDisponibles (){
   
-    document.querySelector(`#divPaginaPaseador`).style.display = `none`;
+ document.querySelector("#divPaginaUsuario").style.display = "none"
      document.querySelector(`#divVerPaseadores`).style.display = `block`;
       cargarTablaPaseadores(); // Llena la tabla
 }
