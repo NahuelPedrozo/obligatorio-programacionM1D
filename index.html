@@ -20,123 +20,144 @@
                     <li class="nav-usuario">
                         <a id="btnVerPaseadoresDisponibles">Ver paseadores disponibles</a>
                     </li>
-                    <li>
-                        <a>Sección 2</a>
+                    <li class="nav-usuario">
+                        <a id="btnVerContratacionPendiente">Ver contratación pendiente</a>
                     </li>
-                    <li>
-                        <a>Sección 3</a>
+                     <li class="nav-usuario">
+                        <a id="btnVerListadoDePaseadores">Ver listado de paseadores</a>
                     </li>
-                    <li class="nav-usuario nav-paseador">
+                     <li class="nav-paseador">
+                        <a id="btnPaseadorContratacionesPendiente">Contrataciones Pendientes</a>
+                    </li>
+                     <li class="nav-paseador">
+                        <a id="btnPaseadorPerrosAsignados">Perros Asignados</a>
+                    </li>
+                    <li class="nav-usuario">
                         <a id="btnlogout">Cerrar Sesion</a>
                     </li>
+                    <li class="nav-paseador">
+                        <a id="btnlogoutPaseador">Cerrar Sesion</a>
+                    </li>
+                   
                 </ul>
             </nav>
             <!--Termina Header-->
         </header>
         <main>
             <!--Comienza Div Login-->
-<div id= "divLogin" class="pagina-usuario pagina-usuario">
-    <label for="txtLoginUsuario">Usuario</label>
-<input type="text" value="pedro@pedro.pedro" id="txtLoginUsuario">
+            <div id="divLogin" class="pagina-usuario pagina-usuario">
+                <label for="txtLoginUsuario">Usuario</label>
+                <input type="text" value="pedro@pedro.pedro" id="txtLoginUsuario">
 
-<label for="txtLoginPassword">Contraseña</label>
-<input type="password" value="...1234..." id="txtLoginPassword">
-<br>
+                <label for="txtLoginPassword">Contraseña</label>
+                <input type="password" value="...1234..." id="txtLoginPassword">
+                <br>
 
-<p id="pErroresLogin"></p>
-<a  href="#" id="btnRegistrarse">registrarse como Usuario</a>
-<br><br>
-<button id="btnLogin">Ingresar</button>
+                <p id="pErroresLogin"></p>
+                <a href="#" id="btnRegistrarse">registrarse como Usuario</a>
+                <br><br>
+                <button id="btnLogin">Ingresar</button>
 
-<!--Fin Div Login-->
-</div>
-
-
-<!--Div Pagina Principal Paseador-->
-<div id="divPaginaPaseador" class="pagina-paseador">
-<h1 id="hPaginaPaseador">Bienvenido Paseador</h1>
-    <!--Fin Div Pagina Principal Paseador-->
-</div>
-
-<!-- Div ver paseadores disponibles usuario -->
-<div id="divVerPaseadores" class="verPaseadores"> 
-<h1 id="hVerPaseadores">Paseadores disponibles:</h1>
-<table>
-    <thead>
-        <tr>
-            <th>
-                Nombre
-            </th>
-            <th>
-                Mail 
-            </th>
-            <th>
-                Cupos
-            </th>
-        </tr>
-    </thead>
-    <tbody id="tPaseadores">
-    </tbody>
-</table>
-</div>
+                <!--Fin Div Login-->
+            </div>
 
 
-<div id="divPaginaUsuario" class="pagina-usuario">
-<h1 id="hPaginaUsuario">Bienvenido Usuario!!</h1>
-    <!--Fin Div Pagina Principal Usuario-->
-</div>
-        
+            <!--Div Pagina Principal Paseador-->
+            <div id="divPaginaPaseador" class="pagina-paseador">
+                <h1 id="hPaginaPaseador">Bienvenido Paseador</h1>
+                <!--Fin Div Pagina Principal Paseador-->
+            </div>
+
+            <!-- Comienzo Div ver paseadores disponibles usuario -->
+            <div id="divVerPaseadores" class="verPaseadores">
+                <h1 id="hVerPaseadores">Paseadores disponibles:</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                Nombre
+                            </th>
+                            <th>
+                                Mail
+                            </th>
+                            <th>
+                                Cupos
+                            </th>
+                            <th>Contratar
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tPaseadores">
+                    </tbody>
+                </table>
+            </div>
+            <!-- Final Div ver paseadores disponibles usuario -->
+
+            <!-- Inicio Div para mostrar/cancelar contratación pendiente -->
+            <div id="divContratacionPendiente" style="display:none;">
+                <h2>Contratación pendiente</h2>
+                <div id="infoContratacionPendiente"></div>
+                <button id="btnCancelarContratacion" style="display:none;">Cancelar Contratación</button>
+            </div>
+            <!-- Final Div para mostrar/cancelar contratación pendiente -->
+
+            <!--Inicio Div Pagina principal usuario-->
+            <div id="divPaginaUsuario" class="pagina-usuario">
+                <h1 id="hPaginaUsuario">Bienvenido Usuario!!</h1>
+                <!--Fin Div Pagina Principal Usuario-->
+            </div>
+
             <!--Div registro-->
-<div id= "divRegistro" class="pagina-usuario">
-    <label for="txtRegistroUsuarioNombre">Nombre:</label><br />
-<input type="text" id="txtRegistroUsuarioNombre" />
-<br>
+            <div id="divRegistro" class="pagina-usuario">
+                <label for="txtRegistroUsuarioNombre">Nombre:</label><br />
+                <input type="text" id="txtRegistroUsuarioNombre" />
+                <br>
 
-<label for="txtRegistroUsuarioEdad">Edad:</label><br />
-<input type="text" value="" id="txtRegistroUsuarioEdad" />
-<br>
+                <label for="txtRegistroUsuarioEdad">Edad:</label><br />
+                <input type="text" value="" id="txtRegistroUsuarioEdad" />
+                <br>
 
-<label for="txtRegistroUsuarioMail">Mail:</label><br />
-<input type="text" value="" id="txtRegistroUsuarioMail" />
-<br>
+                <label for="txtRegistroUsuarioMail">Mail:</label><br />
+                <input type="text" value="" id="txtRegistroUsuarioMail" />
+                <br>
 
-<label for="txtRegistroUsuarioPass">Pass:</label><br />
-<input type="password" value="" id="txtRegistroUsuarioPass" />
-<br>
+                <label for="txtRegistroUsuarioPass">Pass:</label><br />
+                <input type="password" value="" id="txtRegistroUsuarioPass" />
+                <br>
 
-<label for="txtRegistroUsuarioPerro">Nombre Perro:</label><br />
-<input type="text" value="" id="txtRegistroUsuarioPerro" />
-<br>
+                <label for="txtRegistroUsuarioPerro">Nombre Perro:</label><br />
+                <input type="text" value="" id="txtRegistroUsuarioPerro" />
+                <br>
 
-<label for="slcRegistroUsuarioTamanho">Tamaño</label><br />
-<select name="slcRegistroUsuarioTamanho" id="slcRegistroUsuarioTamanho">
-    <option value="X"></option>
-    <option value="tamanhoC">Chico</option>
-    <option value="tamanhoM">Mediano</option>
-    <option value="tamanhoG">Grande</option>
-</select>
-<br>
-<p id="pErroresRegistro"></p>
-<button id="btnRegistro">Registrar</button> 
-<button id="btnCancelarRegistro">Cancelar</button>
-<!--Fin Div registro-->
-</div>
-
-
-
-        
-        <!-- FIN CONTENIDO -->
-        <footer>
-            <a href="https://www.ort.edu.uy">Footer</a>
-        </footer>
-        <!-- FIN PIE -->
+                <label for="slcRegistroUsuarioTamanho">Tamaño</label><br />
+                <select name="slcRegistroUsuarioTamanho" id="slcRegistroUsuarioTamanho">
+                    <option value="X"></option>
+                    <option value="tamanhoC">Chico</option>
+                    <option value="tamanhoM">Mediano</option>
+                    <option value="tamanhoG">Grande</option>
+                </select>
+                <br>
+                <p id="pErroresRegistro"></p>
+                <button id="btnRegistro">Registrar</button>
+                <button id="btnCancelarRegistro">Cancelar</button>
+                <!--Fin Div registro-->
+            </div>
 
 
-        <!--Termina contenedor general-->
+
+
+            <!-- FIN CONTENIDO -->
+            <footer>
+                <a href="https://www.ort.edu.uy">Footer</a>
+            </footer>
+            <!-- FIN PIE -->
+
+
+            <!--Termina contenedor general-->
     </div>
 
-<!--CAMBIOS PROBAR-->
-<!--
+    <!--CAMBIOS PROBAR-->
+    <!--
 ORDEN DE LOS SCRIPTS
 - CLASES
 - SISTEMA (utiliza las clases)
@@ -145,7 +166,7 @@ ORDEN DE LOS SCRIPTS
     <script src="js/clases.js"></script>
     <script src="js/sistema.js"></script>
     <script src="js/codigo.js"></script>
-    
+
 </body>
 
 </html>
