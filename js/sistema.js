@@ -3,356 +3,759 @@ Una clase en JavaScript es la "receta" para poder construir un objeto
 */
 
 class Sistema {
-
-    /* 
+  /* 
     El constructor le dice a JavaScript como se tiene que ver un objeto.
     */
-    constructor(pNombreAplicacion) {
-        this.contrataciones = [];
-        this.usuarios = [];
-        this.perros = [];
-        this.nombreAplicacion = pNombreAplicacion;
+  constructor(pNombreAplicacion) {
+    this.contrataciones = [];
+    this.usuarios = [];
+    this.perros = [];
+    this.nombreAplicacion = pNombreAplicacion;
+    this.usuarioLogueado = null; // Variable para almacenar el usuario logueado
+  }
+
+  /**
+   * Comprueba que el usuario existe y si existe comprueba que coincida el password.
+   *
+   * @param {string} pMail
+   * @param {*string} pPass
+   * @returns {Boolean}
+   */
+
+  elUsuarioEsCorrecto(pMail, pPass) {
+    let unUsuario = this.buscarUnUsuarioPorMail(pMail);
+
+    if (unUsuario !== null && unUsuario.password === pPass) {
+      this.usuarioLogueado = unUsuario; // Guardamos el usuario logueados
+      return true;
+    } else {
+      return false;
     }
+  }
 
+  /**
+   * comprueba si el usuario es paseador
+   * @param {String} pMail
+   * @returns {Boolean} resultado
+   */
+  esPaseador(pMail) {
+    let usuario = this.buscarUnUsuarioPorMail(pMail);
 
-    /**
-     * Comprueba que el usuario existe y si existe comprueba que coincida el password.
-     * 
-     * @param {string} pMail
-     * @param {*string} pPass 
-     * @returns {Boolean}
+    if (usuario !== null) {
+      return usuario.esPaseador;
+    } else {
+      return false;
+    }
+  }
+  /**
+   * retorna Null si el usuario no existe
+   * @param {string} pMail
+   * @returns
+   */
+  buscarUnUsuarioPorMail(pMail) {
+    /**Vamos a usar una variable que empieza en null y si en algun momento encuentra el valor
+     * que estoy buscando, va a rellenar ese valor.
      */
+    let usuarioEncontrado = null;
 
-    elUsuarioEsCorrecto(pMail, pPass) {
+    let i = 0;
 
-        let unUsuario = this.buscarUnUsuarioPorMail(pMail);
+    while (usuarioEncontrado === null && i < this.usuarios.length) {
+      if (this.usuarios[i].mail.toUpperCase() === pMail.toUpperCase()) {
+        usuarioEncontrado = this.usuarios[i];
+      }
+      i++;
+    }
+    return usuarioEncontrado;
+  }
 
-        if (unUsuario !== null && unUsuario.password === pPass) {
-            return true;
-        } else {
-            return false
-        }
+  /**
+   *
+   * @param {String} pMail
+   * @returns {boolean} retorna true si el usuario existe
+   */
+  existeUsuario(pMail) {
+    let unUsuario = this.buscarUnUsuarioPorMail(pMail);
+    if (unUsuario === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  esUnPasswordValido(pPass) {
+    let tieneNumero = false;
+    let tieneCaracterEspecial = false;
+
+    let tieneMayuscula = false;
+    let tieneMinuscula = false;
+
+    let i = 0;
+
+    while (
+      (!tieneMayuscula ||
+        !tieneMinuscula ||
+        !tieneNumero ||
+        !tieneCaracterEspecial) &&
+      i < pPass.length
+    ) {
+      if (pPass.charCodeAt(i) >= 48 && pPass.charCodeAt(i) <= 57) {
+        tieneNumero = true;
+      } else if (
+        (pPass.charCodeAt(i) >= 33 && pPass.charCodeAt(i) <= 47) ||
+        (pPass.charCodeAt(i) >= 58 && pPass.charCodeAt(i) <= 64) ||
+        (pPass.charCodeAt(i) >= 94 && pPass.charCodeAt(i) <= 96) ||
+        pPass.charCodeAt(i) >= 123
+      ) {
+        tieneCaracterEspecial = true;
+      } else if (pPass.charCodeAt(i) >= 65 && pPass.charCodeAt(i) <= 90) {
+        tieneMayuscula = true;
+      } else if (pPass.charCodeAt(i) >= 97 && pPass.charCodeAt(i) <= 122) {
+        tieneMinuscula = true;
+      }
+      i++;
+    }
+    return (
+      tieneNumero &&
+      tieneCaracterEspecial &&
+      pPass.length >= 8 &&
+      tieneMayuscula &&
+      tieneMinuscula
+    );
+  }
+
+  agregarUsuario(
+    pNombre,
+    pEdad,
+    pMail,
+    pPassword,
+    pEsPaseador,
+    pNombrePerro,
+    pTamanoPerro
+  ) {
+    let errores = this.validarDatosDeUsuario(
+      pNombre,
+      pEdad,
+      pMail,
+      pPassword,
+      pNombrePerro,
+      pTamanoPerro,
+      pEsPaseador
+    );
+
+    if (errores.length === 0) {
+      let unUsuario = new Usuario(
+        pNombre,
+        pEdad,
+        pMail,
+        pPassword,
+        pEsPaseador,
+        pNombrePerro,
+        pTamanoPerro
+      );
+
+      if (!unUsuario.esPaseador) {
+        let perro = new Perro(pNombrePerro, pTamanoPerro, unUsuario);
+        this.perros.push(perro);
+      }
+
+      this.usuarios.push(unUsuario);
+    }
+    return errores;
+  }
+
+  validarDatosDeUsuario(
+    pNombre,
+    pEdad,
+    pMail,
+    pPassword,
+    pNombrePerro,
+    pTamanoPerro,
+    pEsPaseador
+  ) {
+    let errores = "";
+
+    if (this.existeUsuario(pMail)) {
+      errores += "<br> El mail de usuario no está disponible";
     }
 
-
-
-    /**
-     * comprueba si el usuario es paseador
-     * @param {String} pMail 
-     * @returns {Boolean} resultado
-     */
-    esPaseador(pMail) {
-
-        let usuario = this.buscarUnUsuarioPorMail(pMail);
-
-        if (usuario !== null) {
-            return usuario.esPaseador;
-        } else {
-            return false;
-        }
-    }
-    /**
-     * retorna Null si el usuario no existe
-     * @param {string} pMail 
-     * @returns 
-     */
-    buscarUnUsuarioPorMail(pMail) {
-        /**Vamos a usar una variable que empieza en null y si en algun momento encuentra el valor 
-         * que estoy buscando, va a rellenar ese valor.
-         */
-        let usuarioEncontrado = null;
-
-        let i = 0;
-
-        while (usuarioEncontrado === null && i < this.usuarios.length) {
-            if (this.usuarios[i].mail.toUpperCase() === pMail.toUpperCase()) {
-                usuarioEncontrado = this.usuarios[i];
-            }
-            i++;
-        }
-        return usuarioEncontrado;
+    if (pNombre.indexOf(" ") >= 0) {
+      errores += "<br> El nombre de usuario no puede contener espacios";
     }
 
-    /**
-     * 
-     * @param {String} pMail
-     * @returns {boolean} retorna true si el usuario existe 
-     */
-    existeUsuario(pMail) {
-
-        let unUsuario = this.buscarUnUsuarioPorMail(pMail);
-        if (unUsuario === null) {
-            return false;
-        } else {
-            return true;
-        }
+    if (
+      pMail.indexOf("@") < 0 ||
+      pMail.indexOf("@") !== pMail.lastIndexOf("@")
+    ) {
+      errores += "<br> El mail solo puede contener un arroba";
+    }
+    if (pEdad < 18) {
+      errores += "<br>Debes ser mayor de edad";
     }
 
-
-
-    esUnPasswordValido(pPass) {
-        let tieneNumero = false;
-        let tieneCaracterEspecial = false;
-
-        let tieneMayuscula = false;
-        let tieneMinuscula = false;
-
-        let i = 0;
-
-        while ((!tieneMayuscula || !tieneMinuscula || !tieneNumero || !tieneCaracterEspecial) && i < pPass.length) {
-            if (pPass.charCodeAt(i) >= 48 && pPass.charCodeAt(i) <= 57) {
-                tieneNumero = true;
-            } else if (
-                pPass.charCodeAt(i) >= 33 && pPass.charCodeAt(i) <= 47 ||
-                pPass.charCodeAt(i) >= 58 && pPass.charCodeAt(i) <= 64 ||
-                pPass.charCodeAt(i) >= 94 && pPass.charCodeAt(i) <= 96 ||
-                pPass.charCodeAt(i) >= 123
-            ) {
-                tieneCaracterEspecial = true;
-            } else if (pPass.charCodeAt(i) >= 65 && pPass.charCodeAt(i) <= 90) {
-                tieneMayuscula = true;
-            }
-            else if (pPass.charCodeAt(i) >= 97 && pPass.charCodeAt(i) <= 122) {
-                tieneMinuscula = true;
-            }
-            i++
-
-        }
-        return (tieneNumero && tieneCaracterEspecial && pPass.length >= 8 && tieneMayuscula && tieneMinuscula);
+    if (!this.esUnPasswordValido(pPassword)) {
+      errores +=
+        "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo.";
     }
 
-
-
-    agregarUsuario(pNombre, pEdad, pMail, pPassword, pEsPaseador, pNombrePerro, pTamanoPerro) {
-
-        let errores = this.validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword, pNombrePerro, pTamanoPerro, pEsPaseador);
-
-        if (errores.length === 0) {
-            let unUsuario = new Usuario(pNombre, pEdad, pMail, pPassword, pEsPaseador, pNombrePerro, pTamanoPerro);
-
-
-            if (!unUsuario.esPaseador) {
-                let perro = new Perro(pNombrePerro, pTamanoPerro, unUsuario);
-                this.perros.push(perro);
-            }
-
-
-            this.usuarios.push(unUsuario);
-        }
-        return errores;
-
-
-
+    if (!pEsPaseador) {
+      if (pNombrePerro === "") {
+        errores += "<br>Debe ingresar el nombre del perro.";
+      }
+      if (pTamanoPerro === "") {
+        errores += "<br>Debe seleccionar un tamaño de perro.";
+      }
     }
 
-    validarDatosDeUsuario(pNombre, pEdad, pMail, pPassword, pNombrePerro, pTamanoPerro, pEsPaseador) {
-        let errores = "";
-
-        if (this.existeUsuario(pMail)) {
-            errores += "<br> El mail de usuario no está disponible";
-        }
-
-        if (pNombre.indexOf(" ") >= 0) {
-            errores += "<br> El nombre de usuario no puede contener espacios";
-        }
-
-        if (pMail.indexOf("@") < 0 || (pMail.indexOf("@")
-            !== pMail.lastIndexOf("@"))) {
-            errores += "<br> El mail solo puede contener un arroba";
-        }
-        if (pEdad < 18) {
-            errores += "<br>Debes ser mayor de edad"
-        }
-
-        if (!this.esUnPasswordValido(pPassword)) {
-            errores += "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo."
-        }
-
-        if (!pEsPaseador) {
-            if (pNombrePerro === "") {
-                errores += "<br>Debe ingresar el nombre del perro.";
-            }
-            if (pTamanoPerro === "") {
-                errores += "<br>Debe seleccionar un tamaño de perro.";
-            }
-        }
-
-        return errores;
+    return errores;
+  }
+  //**Obtenemos solo los paseadores para los datos de la tabla  */
+  obtenerSoloPaseadores() {
+    let paseadores = [];
+    for (let i = 0; i < this.usuarios.length; i++) {
+      let item = this.usuarios[i];
+      if (item.esPaseador) {
+        paseadores.push(item);
+      }
     }
-    //**Obtenemos solo los paseadores para los datos de la tabla  */
-    obtenerSoloPaseadores() {
-        let paseadores = [];
-        for (let i = 0; i < this.usuarios.length; i++) {
-            let item = this.usuarios[i];
-            if (item.esPaseador) {
-                paseadores.push(item);
-            }
-        }
-        return paseadores
+    return paseadores;
+  }
+
+  // filtrar contrataciones del usuario logueado
+
+  obtenerContratacionesDelUsuario() {
+    let contratacionesDelUsuario = [];
+
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (this.contrataciones[i].perro.duenho.id === this.usuarioLogueado.id) {
+        contratacionesDelUsuario.push(this.contrataciones[i]);
+      }
+    }
+    return contratacionesDelUsuario;
+  }
+
+  buscarPerroPorDuenho(idDuenho) {
+    let perroDelUsuario = null;
+    for (let i = 0; i < this.perros.length; i++) {
+      if (this.perros[i].duenho.id === idDuenho) {
+        perroDelUsuario = this.perros[i];
+      }
+    }
+    return perroDelUsuario;
+  }
+
+  //Realizamos la contratacion
+  crearContratacion(perro, paseador) {
+    let cupoNecesario = this.obtenerCupoSegunTamanho(perro.tamanho);
+    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let tipoPermitido = this.tipoDePerrosPendientes(paseador);
+
+    if (tipoPermitido !== null && tipoPermitido !== perro.tamanho) {
+      return "No se puede contratar: ya hay perros de otro tamaño asignados.";
     }
 
-
-
-
-    //Realizamos la contratacion 
-    crearContratacion(perro, paseador) {
-        let cupoNecesario = this.obtenerCupoSegunTamanho(perro.tamanho);
-        let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
-        let tipoPermitido = this.tipoDePerrosPendientes(paseador);
-
-        if (tipoPermitido !== null && tipoPermitido !== perro.tamanho) {
-            return "No se puede contratar: ya hay perros de otro tamaño asignados.";
-        }
-
-        if (cupoNecesario > cuposRestantes) {
-            return "No hay cupos suficientes.";
-        }
-/* 
+    if (cupoNecesario > cuposRestantes) {
+      return "No hay cupos suficientes.";
+    }
+    /* 
         let tamanhos = obtenerTamanhos(paseador) 
 
         if (!validarTamanhoPerro(perro.tamanho, tamanhos)){
             return `No se puede contratar un perro grande con un perro chico o viceversa.`
         } */
 
+    this.actualizarCuposPaseador(perro.tamanho, paseador);
 
-        this.actualizarCuposPaseador(perro.tamanho, paseador);
+    let nueva = new Contratacion(perro, paseador);
+    this.contrataciones.push(nueva);
+    this.rechazarContratacionesIncompatibles(nueva, paseador);
+    return ""; // éxito
+  }
 
-        let nueva = new Contratacion(perro, paseador);
-        this.contrataciones.push(nueva);
-        this.rechazarContratacionesIncompatibles(paseador);
-        return ""; // éxito
-    }
+  actualizarCuposPaseador(tamanho, paseador) {
+    paseador.cupos = paseador.cupos - this.obtenerCupoSegunTamanho(tamanho);
+  }
 
-    actualizarCuposPaseador (tamanho, paseador){
-
-        paseador.cupos = paseador.cupos - this.obtenerCupoSegunTamanho(tamanho)
-    }
-
-
-
-    obtenerTamanhos (paseador){
-  let tamanhos = [];
-for (let i = 0; i < this.contrataciones.length; i++){
-    if (this.contrataciones[i].paseador === paseador){
+  obtenerTamanhos(paseador) {
+    let tamanhos = [];
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (this.contrataciones[i].paseador === paseador) {
         let tamanhoAgregar = this.contrataciones[i].paseador.perro.tamanho;
         // Reemplazo de includes por verificación manual
         let yaExiste = false;
         for (let i = 0; i < tamanhos.length; i++) {
-            if (tamanhos[i] === tamanhoAgregar) {
-                yaExiste = true;
-                break;
-            }
+          if (tamanhos[i] === tamanhoAgregar) {
+            yaExiste = true;
+            break;
+          }
         }
         if (!yaExiste) {
-            tamanhos.push(tamanhoAgregar);
+          tamanhos.push(tamanhoAgregar);
         }
+      }
     }
+    return tamanhos;
+  }
+
+  // obtenemos los cupos segun el tamaño
+  obtenerCupoSegunTamanho(tam) {
+    if (tam === "tamanhoC") return 1;
+    if (tam === "tamanhoM") return 2;
+    if (tam === "tamanhoG") return 4;
+    return 0;
+  }
+
+  cuposYaOcupados(paseador) {
+    let total = 0;
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (
+        this.contrataciones[i].paseador === paseador &&
+        this.contrataciones[i].estado === "pendiente"
+      ) {
+        total += this.obtenerCupoSegunTamanho(
+          this.contrataciones[i].perro.tamanho
+        );
+      }
+    }
+    return total;
+  }
+
+  tipoDePerrosPendientes(paseador) {
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (
+        this.contrataciones[i].paseador === paseador &&
+        this.contrataciones[i].estado === "pendiente"
+      ) {
+        return this.contrataciones[i].perro.tamanho;
+      }
+    }
+    return null;
+  }
+
+  validarTamanhoPerro(tamanho, tamanhos) {
+    if (tamanho === `tamanhoC`) {
+      for (let i = 0; i < tamanhos.length; i++) {
+        if (tamanhos[i] === `tamanhoG`) {
+          return false;
+        }
+      }
+    }
+    if (tamanho === `tamanhoG`) {
+      for (let i = 0; i < tamanhos.length; i++) {
+        if (tamanhos[i] === `tamanhoC`) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  rechazarContratacionesIncompatibles(contratacionActual, paseador) {
+    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let tipo = this.tipoDePerrosPendientes(paseador);
+
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (this.contrataciones[i].id !== contratacionActual.id) {
+        if (
+          this.contrataciones[i].paseador.id === paseador.id &&
+          this.contrataciones[i].estado === "pendiente"
+        ) {
+          if (
+            this.contrataciones[i].perro.tamanho !== tipo ||
+            this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho) >
+              cuposRestantes
+          ) {
+            this.contrataciones[i].estado = "rechazada";
+          }
+        }
+      }
+    }
+  }
+
+  cancelarContratacion(idContratacion) {
+    let contratacion = this.buscarContratacionPorId(idContratacion);
+    if (contratacion !== null) {
+      contratacion.estado = "cancelada";
+      let cupoNecesario = this.obtenerCupoSegunTamanho(
+        contratacion.perro.tamanho
+      );
+      contratacion.paseador.cupos += cupoNecesario;
+      return true;
+    }
+
+    return false; // Si no se encuentra la contratación, retorna false
+  }
+
+  buscarContratacionPorId(idContratacion) {
+    let contratacionEncontrada = null;
+
+    let i = 0;
+    while (contratacionEncontrada === null && i < this.contrataciones.length) {
+      if (this.contrataciones[i].id === idContratacion) {
+        contratacionEncontrada = this.contrataciones[i];
+      }
+      i++;
+    }
+    return contratacionEncontrada;
+  }
+
+obtenerContratacionesDelPaseador (paseador) {
+    let contratacionesDelPaseador = [];
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (this.contrataciones[i].paseador.id === paseador.id) {
+        contratacionesDelPaseador.push(this.contrataciones[i]);
+      }
+    } return contratacionesDelPaseador;
 }
-return tamanhos;
-    }   
-
-    
-
-    // obtenemos los cupos segun el tamaño
-    obtenerCupoSegunTamanho(tam) {
-        if (tam === "tamanhoC") return 1;
-        if (tam === "tamanhoM") return 2;
-        if (tam === "tamanhoG") return 4;
-        return 0;
-    }
-
-    cuposYaOcupados(paseador) {
-        let total = 0;
-        for (let i = 0; i < this.contrataciones.length; i++) {
-            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
-                total += this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho);
-            }
-        }
-        return total;
-    }
-
-    tipoDePerrosPendientes(paseador) {
-        for (let i = 0; i < this.contrataciones.length; i++ ) {
-            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
-                return this.contrataciones[i].perro.tamanho;
-            }
-        }
-        return null;
-    }
-
-
-    validarTamanhoPerro (tamanho, tamanhos){
-        if (tamanho === `tamanhoC`){
-            for (let i = 0; i < tamanhos.length; i++){
-                if (tamanhos[i] === `tamanhoG`){
-                    return false;
-                }
-            } 
-        }
-          if (tamanho === `tamanhoG`){
-            for (let i = 0; i < tamanhos.length; i++){
-                if (tamanhos[i] === `tamanhoC`){
-                    return false;
-                }
-            } 
-        }
-
-
-         return true;
-    } 
-
-    rechazarContratacionesIncompatibles(paseador) {
-        let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
-        let tipo = this.tipoDePerrosPendientes(paseador);
-
-        for (let i = 0; i < this.contrataciones.length; i++) {
-            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
-                if (this.contrataciones[i].perro.tamanho !== tipo || this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho) > cuposRestantes) {
-                    this.contrataciones[i].estado = "rechazada";
-                }
-            }
-        }
-    }
 
 
 
-    /* 
+  /* 
     ESTE METODO PRECARGA LOS DATOS DE LA APLICACION.
     DENTRO DE LA CLASE NO USAMOS LA PALABRA FUNCTION.
     */
 
-    precargarDatos() {
-        let usuarioAgregadoLinea = 0;
+  precargarDatos() {
+    let usuarioAgregadoLinea = 0;
 
+    /** Precargo usuarios comunes (con perro y tamaño) */
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Ana-López",
+        28,
+        "ana@gmail.com",
+        "Ana1234!",
+        false,
+        "Firulais",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Carlos-Méndez",
+        35,
+        "carlos@gmail.com",
+        "Carl0s@2024",
+        false,
+        "Max",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Lucía-Torres",
+        22,
+        "lucia@gmail.com",
+        "Lucia!789",
+        false,
+        "Luna",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Dieg-Pérez",
+        30,
+        "diego@gmail.com",
+        "D!ego2025",
+        false,
+        "Rocky",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Florencia-Ruiz",
+        26,
+        "flor@gmail.com",
+        "Flor#2023",
+        false,
+        "Nina",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Jorge-Paz",
+        40,
+        "jorgepaz@gmail.com",
+        "Jorge!2024",
+        false,
+        "Toby",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Marina-Lopez",
+        31,
+        "marina@gmail.com",
+        "Mari@1234",
+        false,
+        "Maya",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Ricardo-Gomez",
+        45,
+        "ricardo@gmail.com",
+        "R!cardo2025",
+        false,
+        "Simba",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Julieta-Ferro",
+        29,
+        "julieta@gmail.com",
+        "Juli#2024",
+        false,
+        "Lola",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Santiago-Rey",
+        34,
+        "santi@gmail.com",
+        "Santi@456",
+        false,
+        "Thor",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Micaela-Perez",
+        27,
+        "mica@gmail.com",
+        "Mica123!",
+        false,
+        "Milo",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Federico-Ramirez",
+        38,
+        "fede@gmail.com",
+        "Fede@2023",
+        false,
+        "Zeus",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Agustina-Sosa",
+        25,
+        "agus@gmail.com",
+        "Agus!987",
+        false,
+        "Daisy",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Nicolas-Vega",
+        33,
+        "nicolas@gmail.com",
+        "Nico#321",
+        false,
+        "Balto",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Valeria-Diaz",
+        30,
+        "valeria@gmail.com",
+        "Vale@111",
+        false,
+        "Chispa",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Bruno-Silva",
+        36,
+        "bruno@gmail.com",
+        "Bru!2024",
+        false,
+        "Jazz",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Camila-Herrera",
+        24,
+        "camila@gmail.com",
+        "Cami#789",
+        false,
+        "Tango",
+        "tamanhoG"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Gonzalo-Mora",
+        41,
+        "gonza@gmail.com",
+        "Gonza2025!",
+        false,
+        "Loki",
+        "tamanhoC"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Andrea-Castro",
+        37,
+        "andrea@gmail.com",
+        "Andre@555",
+        false,
+        "Coco",
+        "tamanhoM"
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Martin-Acosta",
+        32,
+        "martin@gmail.com",
+        "Mart!n2024",
+        false,
+        "Osito",
+        "tamanhoG"
+      )
+    );
 
-        /** Precargo usuarios comunes (con perro y tamaño) */
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Ana-López", 28, "ana@gmail.com", "Ana1234!", false, "Firulais", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Carlos-Méndez", 35, "carlos@gmail.com", "Carl0s@2024", false, "Max", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Lucía-Torres", 22, "lucia@gmail.com", "Lucia!789", false, "Luna", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Dieg-Pérez", 30, "diego@gmail.com", "D!ego2025", false, "Rocky", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Florencia-Ruiz", 26, "flor@gmail.com", "Flor#2023", false, "Nina", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Jorge-Paz", 40, "jorgepaz@gmail.com", "Jorge!2024", false, "Toby", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Marina-Lopez", 31, "marina@gmail.com", "Mari@1234", false, "Maya", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Ricardo-Gomez", 45, "ricardo@gmail.com", "R!cardo2025", false, "Simba", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Julieta-Ferro", 29, "julieta@gmail.com", "Juli#2024", false, "Lola", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Santiago-Rey", 34, "santi@gmail.com", "Santi@456", false, "Thor", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Micaela-Perez", 27, "mica@gmail.com", "Mica123!", false, "Milo", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Federico-Ramirez", 38, "fede@gmail.com", "Fede@2023", false, "Zeus", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Agustina-Sosa", 25, "agus@gmail.com", "Agus!987", false, "Daisy", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Nicolas-Vega", 33, "nicolas@gmail.com", "Nico#321", false, "Balto", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Valeria-Diaz", 30, "valeria@gmail.com", "Vale@111", false, "Chispa", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Bruno-Silva", 36, "bruno@gmail.com", "Bru!2024", false, "Jazz", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Camila-Herrera", 24, "camila@gmail.com", "Cami#789", false, "Tango", "tamanhoG"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Gonzalo-Mora", 41, "gonza@gmail.com", "Gonza2025!", false, "Loki", "tamanhoC"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Andrea-Castro", 37, "andrea@gmail.com", "Andre@555", false, "Coco", "tamanhoM"));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Martin-Acosta", 32, "martin@gmail.com", "Mart!n2024", false, "Osito", "tamanhoG"));
+    /** Precargo paseadores (sin perro ni tamaño) */
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Mathias-Perez",
+        29,
+        "matiasp@gmail.com",
+        "Mati2024!",
+        true,
+        null,
+        null
+      )
+    );
 
-        /** Precargo paseadores (sin perro ni tamaño) */
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Matías-Díaz", 29, "matiasp@gmail.com", "Mati2024!", true, null, null));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Sofía-Varela", 32, "sofiap@gmail.com", "Sofi@123", true, null, null));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Tomás-Suárez", 27, "tomasp@gmail.com", "Tom@2025", true, null, null));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Valentina-Costa", 24, "valenp@gmail.com", "Vale!456", true, null, null));
-        console.log(usuarioAgregadoLinea++, " ", this.agregarUsuario("Joaquín-Morales", 31, "joaquinp@gmail.com", "Joaq#789", true, null, null));
-    }
+    this.usuarios[this.usuarios.length - 1].cupos = 1;
+
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Sofia-Garcia",
+        32,
+        "sofiap@gmail.com",
+        "Sofi@123",
+        true,
+        null,
+        null
+      )
+    );
+
+    this.usuarios[this.usuarios.length - 1].cupos = 5;
+
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Tomas-Perez",
+        27,
+        "tomasp@gmail.com",
+        "Tom@2025",
+        true,
+        null,
+        null
+      )
+    );
+
+    this.usuarios[this.usuarios.length - 1].cupos = 3;
+
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Valentina-Costa",
+        24,
+        "valenp@gmail.com",
+        "Vale!456",
+        true,
+        null,
+        null
+      )
+    );
+    console.log(
+      usuarioAgregadoLinea++,
+      " ",
+      this.agregarUsuario(
+        "Joaquín-Morales",
+        31,
+        "joaquinp@gmail.com",
+        "Joaq#789",
+        true,
+        null,
+        null
+      )
+    );
+    this.usuarios[this.usuarios.length - 1].cupos = 100;
+  }
 }
-
