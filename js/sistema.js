@@ -158,7 +158,7 @@ class Sistema {
 
         if (pMail.indexOf("@") < 0 || (pMail.indexOf("@")
             !== pMail.lastIndexOf("@"))) {
-            errores += "<br> El Mial solo puede contener un arroba";
+            errores += "<br> El mail solo puede contener un arroba";
         }
         if (pEdad < 18) {
             errores += "<br>Debes ser mayor de edad"
@@ -196,7 +196,7 @@ class Sistema {
 
     //Realizamos la contratacion 
     crearContratacion(perro, paseador) {
-        let cupoNecesario = this.obtenerCupoSegunTamaño(perro.tamanho);
+        let cupoNecesario = this.obtenerCupoSegunTamanho(perro.tamanho);
         let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
         let tipoPermitido = this.tipoDePerrosPendientes(paseador);
 
@@ -207,6 +207,15 @@ class Sistema {
         if (cupoNecesario > cuposRestantes) {
             return "No hay cupos suficientes.";
         }
+/* 
+        let tamanhos = obtenerTamanhos(paseador) 
+
+        if (!validarTamanhoPerro(perro.tamanho, tamanhos)){
+            return `No se puede contratar un perro grande con un perro chico o viceversa.`
+        } */
+
+
+        this.actualizarCuposPaseador(perro.tamanho, paseador);
 
         let nueva = new Contratacion(perro, paseador);
         this.contrataciones.push(nueva);
@@ -214,8 +223,38 @@ class Sistema {
         return ""; // éxito
     }
 
+    actualizarCuposPaseador (tamanho, paseador){
+
+        paseador.cupos = paseador.cupos - this.obtenerCupoSegunTamanho(tamanho)
+    }
+
+
+
+    obtenerTamanhos (paseador){
+  let tamanhos = [];
+for (let i = 0; i < this.contrataciones.length; i++){
+    if (this.contrataciones[i].paseador === paseador){
+        let tamanhoAgregar = this.contrataciones[i].paseador.perro.tamanho;
+        // Reemplazo de includes por verificación manual
+        let yaExiste = false;
+        for (let i = 0; i < tamanhos.length; i++) {
+            if (tamanhos[i] === tamanhoAgregar) {
+                yaExiste = true;
+                break;
+            }
+        }
+        if (!yaExiste) {
+            tamanhos.push(tamanhoAgregar);
+        }
+    }
+}
+return tamanhos;
+    }   
+
+    
+
     // obtenemos los cupos segun el tamaño
-    obtenerCupoSegunTamaño(tam) {
+    obtenerCupoSegunTamanho(tam) {
         if (tam === "tamanhoC") return 1;
         if (tam === "tamanhoM") return 2;
         if (tam === "tamanhoG") return 4;
@@ -224,37 +263,56 @@ class Sistema {
 
     cuposYaOcupados(paseador) {
         let total = 0;
-        for (let c of this.contrataciones) {
-            if (c.paseador === paseador && c.estado === "pendiente") {
-                total += this.obtenerCupoSegunTamaño(c.perro.tamanho);
+        for (let i = 0; i < this.contrataciones.length; i++) {
+            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
+                total += this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho);
             }
         }
         return total;
     }
 
     tipoDePerrosPendientes(paseador) {
-        for (let c of this.contrataciones) {
-            if (c.paseador === paseador && c.estado === "pendiente") {
-                return c.perro.tamanho;
+        for (let i = 0; i < this.contrataciones.length; i++ ) {
+            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
+                return this.contrataciones[i].perro.tamanho;
             }
         }
         return null;
     }
 
+
+    validarTamanhoPerro (tamanho, tamanhos){
+        if (tamanho === `tamanhoC`){
+            for (let i = 0; i < tamanhos.length; i++){
+                if (tamanhos[i] === `tamanhoG`){
+                    return false;
+                }
+            } 
+        }
+          if (tamanho === `tamanhoG`){
+            for (let i = 0; i < tamanhos.length; i++){
+                if (tamanhos[i] === `tamanhoC`){
+                    return false;
+                }
+            } 
+        }
+
+
+         return true;
+    } 
+
     rechazarContratacionesIncompatibles(paseador) {
         let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
         let tipo = this.tipoDePerrosPendientes(paseador);
 
-        for (let c of this.contrataciones) {
-            if (c.paseador === paseador && c.estado === "pendiente") {
-                if (c.perro.tamanho !== tipo || this.obtenerCupoSegunTamaño(c.perro.tamanho) > cuposRestantes) {
-                    c.estado = "rechazada";
+        for (let i = 0; i < this.contrataciones.length; i++) {
+            if (this.contrataciones[i].paseador === paseador && this.contrataciones[i].estado === "pendiente") {
+                if (this.contrataciones[i].perro.tamanho !== tipo || this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho) > cuposRestantes) {
+                    this.contrataciones[i].estado = "rechazada";
                 }
             }
         }
     }
-
-
 
 
 

@@ -29,6 +29,10 @@ document.querySelector("#btnRegistrarse").addEventListener("click", mostrarPagin
 document.querySelector("#btnCancelarRegistro").addEventListener("click", volverAlLogin);
 document.querySelector("#btnRegistro").addEventListener("click", registrarUsuario);
 document.querySelector(`#btnVerPaseadoresDisponibles`).addEventListener (`click`, verPaseadoresDisponibles);
+document.querySelector("#btnVerListadoDePaseadores").addEventListener("click", verListadoDePaseadores);
+document.querySelector("#btnPaseadorContratacionesPendiente").addEventListener("click", paseadorVerContratacionesPendientes);
+document.querySelector("#btnPaseadorPerrosAsignados").addEventListener("click", paseadorVerPerrosAsignados);
+
 
 function Login() {
     //Limpia ERRORES
@@ -88,6 +92,11 @@ function logout() {
     document.querySelector("#divPaginaPaseador").style.display = "none";
     document.querySelector("#divRegistro").style.display = "none";
     document.querySelector(`#divVerPaseadores`).style.display = `none`;
+    document.querySelector("#btnVerListadoDePaseadores").style.display = "none";
+    document.querySelector("#btnPaseadorContratacionesPendiente").style.display = "none";
+    document.querySelector("#btnPaseadorPerrosAsignados").style.display = "none";
+    
+
     let botonesUsuario = document.querySelectorAll(".nav-usuario");
     let botonesPaseador = document.querySelectorAll(".nav-paseador");
 
@@ -114,6 +123,10 @@ function iniciarAplicacion() {
     document.querySelector("#divRegistro").style.display = "none";
     document.querySelector("#navPrincipal").style.display = "none";
     document.querySelector(`#divVerPaseadores`).style.display = `none`;
+    document.querySelector("#btnVerListadoDePaseadores").style.display = "none";
+    document.querySelector("#btnPaseadorContratacionesPendiente").style.display = "none";
+    document.querySelector("#btnPaseadorPerrosAsignados").style.display = "none";
+    document.querySelector(`#btnlogout`).style.display = `none`;
 }
 
 
@@ -126,18 +139,50 @@ function loginExitoso(pNombre) {
     document.querySelector("#txtLoginUsuario").value = "";
     document.querySelector("#divLogin").style.display = "none";
     document.querySelector("#navPrincipal").style.display = "block";
+    document.querySelector("#btnVerListadoDePaseadores").style.display = "block";
+
+    let botonesUsuarios = document.querySelectorAll (`.nav-usuario`);
+    let botonesPaseadores = document.querySelectorAll (`.nav-paseador`);
+
+    // Primero ocultar los botones
+
+    for (let i = 0; i < botonesUsuarios.length; i++){
+        botonesUsuarios[i].style.display = `none`;
+    }
+    for (let i = 0; i < botonesPaseadores.length; i++){
+        botonesPaseadores[i].style.display = `none`;
+    }
+
+
 
     // Ocultar todos por las dudas
     document.querySelector("#divPaginaUsuario").style.display = "none";
     document.querySelector("#divPaginaPaseador").style.display = "none";
     document.querySelector("#divRegistro").style.display = "none";
     document.querySelector(`#divVerPaseadores`).style.display = `none`;
+    document.querySelector("#btnPaseadorContratacionesPendiente").style.display = "none";
+    document.querySelector("#btnPaseadorPerrosAsignados").style.display = "none";
 
     if (SISTEMA.esPaseador(pNombre)) {
         document.querySelector("#divPaginaPaseador").style.display = "block";
+        document.querySelector("#btnVerListadoDePaseadores").style.display = "block";
+        document.querySelector("#btnPaseadorContratacionesPendiente").style.display = "block";
+        document.querySelector("#btnPaseadorPerrosAsignados").style.display = "block";
+        
+        
+        for ( let i = 0; i < botonesPaseadores.length; i++){
+            botonesPaseadores[i].style.display = `block`;
+        }
+
+
     } else {
         document.querySelector("#divPaginaUsuario").style.display = "block";
+
+        for (let i = 0; i < botonesUsuarios.length; i++){
+            botonesUsuarios[i].style.display = `block`;
+        }
     }
+    document.querySelector(`#btnlogout`).style.display = `block`;
 }
 
 function mostrarPaginaRegistro() {
@@ -231,4 +276,16 @@ if (usuarioLogueado === null) {
     } else {
         alert("Error al contratar: " + resultado);
     }
+}
+
+function verListadoDePaseadores (){
+
+}
+
+function paseadorVerContratacionesPendientes (){
+
+}
+
+function paseadorVerPerrosAsignados (){
+
 }
