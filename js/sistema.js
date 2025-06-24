@@ -411,6 +411,7 @@ obtenerContratacionesDelPaseador (paseador) {
 
 
 
+
   /* 
     ESTE METODO PRECARGA LOS DATOS DE LA APLICACION.
     DENTRO DE LA CLASE NO USAMOS LA PALABRA FUNCTION.

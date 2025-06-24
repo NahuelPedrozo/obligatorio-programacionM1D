@@ -365,10 +365,10 @@ function verContratacionesPendientes() {
   }
   document.querySelector("#tContrataciones").innerHTML = rows;
 
-  darEventoCancealarContrataciones();
+  darEventoCancelarContrataciones();
 }
 
-function darEventoCancealarContrataciones() {
+function darEventoCancelarContrataciones() {
   let botonesCancelarContrataciones = document.querySelectorAll(
     `.btnCancelarContrataciones`
   );
@@ -381,7 +381,12 @@ function darEventoCancealarContrataciones() {
 function cancelarContratacion() {
   let idContratacion = Number(this.getAttribute("data-contratacion-id"));
   let resultado = SISTEMA.cancelarContratacion(idContratacion);
-  verContratacionesPendientes();
+  if (resultado){
+    alert(`La contratacion fue cancelada con exito.`);
+}else{
+    alert(`No se pudo cancelar la contratacion.`);
+}
+  paseadorVerPerrosAsignados();
 }
 
 function paseadorVerPerrosAsignados() {
@@ -403,12 +408,40 @@ function paseadorVerPerrosAsignados() {
             <td>${item.perro.tamanho}</td>
             <td>${item.estado}</td>
             
-            <td><button data-contratacion-id="${item.id}" class="btnCancelarContrataciones">Cancelar</button></td>
             <td><button data-contratacion-id="${item.id}" class="btnAceptarContratacion">Aceptar</button></td>
+            <td><button data-contratacion-id="${item.id}" class="btnCancelarContrataciones">Cancelar</button></td>
             </tr>`;
     }
   }
 
+
   document.querySelector(`#tContratacionesPendientesPaseador`).innerHTML = rows;
-  darEventoCancealarContratacionesPaseador();
+  darEventoCancelarContrataciones();
+  darEventoAceptarContrataciones();
 }
+
+function darEventoAceptarContrataciones() {
+    console.log(`hola`);
+  let botonesAceptarContrataciones = document.querySelectorAll(
+    `.btnAceptarContratacion`
+  );
+  for (let i = 0; i < botonesAceptarContrataciones.length; i++) {
+    let item = botonesAceptarContrataciones[i];
+    item.addEventListener(`click`, aceptarContratacion);
+  }
+
+}
+
+
+ function aceptarContratacion() {
+
+    let idContratacion = Number(this.getAttribute("data-contratacion-id"));
+    let contratacion = SISTEMA.buscarContratacionPorId(idContratacion);
+
+    if (contratacion !== null && contratacion.paseador.id === SISTEMA.usuarioLogueado.id) {
+     paseadorVerPerrosAsignados();//esto lo que hace es refrescar la tabla
+     alert(`La contratacion fue aceptada con exito.`);
+    }else{
+        alert(`No se pudo aceptar la contratacion.`);
+    }
+ }
