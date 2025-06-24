@@ -387,6 +387,16 @@ class Sistema {
     return false; // Si no se encuentra la contratación, retorna false
   }
 
+  aceptarContrataciones (idContratacion){
+    let contratacion = this.buscarContratacionPorId(idContratacion);
+    if (contratacion !== null && contratacion.estado === `pendiente`){
+        contratacion.estado = `aceptado`;
+        return true;
+    }
+    return false; // Si no se encuentra la contratación o no está pendiente, retorna false
+}
+
+
   buscarContratacionPorId(idContratacion) {
     let contratacionEncontrada = null;
 
@@ -409,6 +419,17 @@ obtenerContratacionesDelPaseador (paseador) {
     } return contratacionesDelPaseador;
 }
 
+obtenerPerrosAsignadosDelPaseador (paseador){
+    let perrosAsignados = [];
+    for (let i = 0; i < this.contrataciones.length; i++){
+        if (this.contrataciones[i].paseador.id === paseador.id &&
+            this.contrataciones[i].estado === `aceptado`
+        ){
+        perrosAsignados.push(this.contrataciones[i].perro);
+    }
+}
+return perrosAsignados;
+}
 
 
 
