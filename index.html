@@ -16,10 +16,13 @@
         <nav>
           <ul id="navPrincipal">
             <li class="nav-usuario">
-              <a id="btnVerPaseadoresDisponibles">Ver paseadores disponibles</a>
+              <a id="btnVerPaseadoresDisponibles">Paseadores disponibles</a>
             </li>
             <li class="nav-usuario">
-              <a id="btnVerContratacionPendiente">Ver contratación pendiente</a>
+              <a id="btnVerContratacionPendiente">Contrataciones pendientes</a>
+            </li>
+            <li class="nav-usuario">
+                <a id="btnListadoPaseadores"> Listado de paseadores</a>
             </li>
             <li class="nav-paseador">
               <a id="btnPaseadorContratacionesPendiente"
@@ -39,7 +42,7 @@
 
       <main>
         <!--Comienza Div Login-->
-        <div id="divLogin" class="pagina-usuario pagina-usuario">
+        <div id="divLogin" class="pagina-usuario pagina-paseador">
           <label for="txtLoginUsuario">Usuario</label>
           <input type="text" value="pedro@pedro.pedro" id="txtLoginUsuario" />
 
@@ -61,7 +64,7 @@
         <!--Fin Div Pagina Principal Paseador-->
 
         <!-- Comienzo Div ver paseadores disponibles usuario -->
-        <div id="divVerPaseadores" class="verPaseadores">
+        <div id="divVerPaseadores" class="pagina-usuario">
           <h1>Paseadores disponibles:</h1>
           <table>
             <thead>
@@ -78,7 +81,7 @@
         <!-- Final Div ver paseadores disponibles usuario -->
 
         <!-- Comienzo Div ver Contrataciones usuario -->
-        <div id="divVerContratacionesPendientes" class="verContrataciones">
+        <div id="divVerContratacionesPendientes" class="pagina-usuario">
           <h1>Contrataciones:</h1>
           <table>
             <thead>
@@ -86,13 +89,27 @@
                 <th>Nombre del paseador</th>
                 <th>Nombre del perro</th>
                 <th>Estado</th>
-                <th>¿Cancelar?</th>
+                
               </tr>
             </thead>
             <tbody id="tContrataciones"></tbody>
           </table>
         </div>
         <!-- Final Div ver Contrataciones usuario -->
+
+        <!--  -->
+         <div id="divListadoDePaseadores" class="pagina-usuario">
+          <h1>Listado de paseadores:</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre del paseador</th>
+                <th>Cupos</th>
+              </tr>
+            </thead>
+            <tbody id="tListadoPaseadores"></tbody>
+          </table>
+        </div>
 
         <!-- Inicio Div para mostrar/cancelar contratación pendiente -->
         <div id="divContratacionPendiente" style="display: none">
@@ -171,6 +188,8 @@
           <!-- Div mostrar perros asignados actualmente-->
         <div id="divPerrosAsignadosPaseador" class="pagina-paseador">
           <h1>Perros asignados actualmente</h1>
+          <div id="divResumenCuposPaseador">
+          </div>
           <table>
             <thead>
               <tr>

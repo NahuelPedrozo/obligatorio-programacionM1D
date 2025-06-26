@@ -48,6 +48,7 @@ document
 document
   .querySelector(`#btnPaseadorContratacionesPendiente`)
   .addEventListener(`click`, paseadorVerContratacionesPendientes);
+  document.querySelector(`#btnListadoPaseadores`).addEventListener(`click`, listadoDePaseadores);
 
 function Login() {
   //Limpia ERRORES
@@ -129,7 +130,9 @@ function logout() {
   ).style.display = `none`;
   document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "none";
-    document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
+  document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
+  document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
+  document.querySelector("#btnListadoPaseadores").style.display = "none";
 
   let botonesUsuario = document.querySelectorAll(".nav-usuario");
   let botonesPaseador = document.querySelectorAll(".nav-paseador");
@@ -165,8 +168,10 @@ function iniciarAplicacion() {
   ).style.display = `none`;
   document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "none";
-    document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
+  document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
+   document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
 }
+
 
 /**
  * TEST - github
@@ -179,7 +184,6 @@ function loginExitoso(pNombre) {
   document.querySelector("#txtLoginUsuario").value = "";
   document.querySelector("#divLogin").style.display = "none";
   document.querySelector("#navPrincipal").style.display = "block";
-
 
   let botonesUsuarios = document.querySelectorAll(`.nav-usuario`);
   let botonesPaseadores = document.querySelectorAll(`.nav-paseador`);
@@ -242,6 +246,7 @@ function verPaseadoresDisponibles() {
   document.querySelector(
     `#divVerContratacionesPendientes`
   ).style.display = `none`;
+    document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
   cargarTablaPaseadores(); // Llena la tabla
 }
 
@@ -336,7 +341,26 @@ function contratarPaseador() {
   }
 }
 
-function verListadoDePaseadores() {} // esta no se va a usar.
+// Tabla de todos los paseadores (pagina-usuario)
+
+function listadoDePaseadores(){
+document.querySelector(`#divListadoDePaseadores`).style.display = `block`;
+document.querySelector(`#divVerPaseadores`).style.display = `none`;
+document.querySelector(`#divVerContratacionesPendientes`).style.display = `none`;
+document.querySelector(`#divPaginaUsuario`).style.display = `none`;
+    let paseadores = SISTEMA.obtenerSoloPaseadores();
+    
+    let rows = "";
+    for (let i = 0; i < paseadores.length; i++) {
+        let item = paseadores[i];
+        rows += `<tr>
+                <td>${item.nombre}</td>
+                <td>${item.cupos}</td>
+            </tr>`;
+    }
+    document.querySelector("#tListadoPaseadores").innerHTML = rows;
+
+}
 
 function verContratacionesPendientes() {
   document.querySelector("#divPaginaUsuario").style.display = "none";
@@ -344,6 +368,7 @@ function verContratacionesPendientes() {
     `#divVerContratacionesPendientes`
   ).style.display = `block`;
   document.querySelector(`#divVerPaseadores`).style.display = `none`;
+  document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
 
   let contrataciones = SISTEMA.obtenerContratacionesDelUsuario();
   let rows = "";
@@ -356,6 +381,12 @@ function verContratacionesPendientes() {
             <td>${item.perro.nombre}</td>
             <td>${item.estado}</td>
             <td><button data-contratacion-id="${item.id}" class="btnCancelarContrataciones">Cancelar</button></td>
+        </tr>`;
+    } else if (item.estado === `aceptado`) {
+      rows += `<tr>
+            <td>${item.paseador.nombre}</td>
+            <td>${item.perro.nombre}</td>
+            <td>${item.estado}</td>
         </tr>`;
     }
   }
@@ -377,19 +408,17 @@ function darEventoCancelarContrataciones() {
 function cancelarContratacion() {
   let idContratacion = Number(this.getAttribute("data-contratacion-id"));
   let resultado = SISTEMA.cancelarContratacion(idContratacion);
-  if (resultado){
+  if (resultado) {
     alert(`La contratacion fue cancelada con exito.`);
-}else{
+  } else {
     alert(`No se pudo cancelar la contratacion.`);
-}
+  }
 
-if (SISTEMA.usuarioLogueado.esPaseador) {
-   paseadorVerContratacionesPendientes();
-}
-else{
- verContratacionesPendientes()
-}
-
+  if (SISTEMA.usuarioLogueado.esPaseador) {
+    paseadorVerContratacionesPendientes();
+  } else {
+    verContratacionesPendientes();
+  }
 }
 
 function paseadorVerContratacionesPendientes() {
@@ -397,7 +426,6 @@ function paseadorVerContratacionesPendientes() {
   document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
   document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "block";
-
 
   let contrataciones = SISTEMA.obtenerContratacionesDelPaseador(
     SISTEMA.usuarioLogueado
@@ -425,7 +453,6 @@ function paseadorVerContratacionesPendientes() {
 }
 
 function darEventoAceptarContrataciones() {
-
   let botonesAceptarContrataciones = document.querySelectorAll(
     `.btnAceptarContratacion`
   );
@@ -433,41 +460,55 @@ function darEventoAceptarContrataciones() {
     let item = botonesAceptarContrataciones[i];
     item.addEventListener(`click`, aceptarContratacion);
   }
-
 }
 
 function aceptarContratacion() {
+  let idContratacion = Number(this.getAttribute("data-contratacion-id"));
+  let resultado = SISTEMA.aceptarContrataciones(idContratacion);
 
-    let idContratacion = Number(this.getAttribute("data-contratacion-id"));
-    let resultado = SISTEMA.aceptarContrataciones(idContratacion);
+  if (resultado) {
+    paseadorVerContratacionesPendientes(); //Refresca la tabla
+    alert(`La contratacion fue aceptada con exito.`);
+  } else {
+    alert(`No se pudo aceptar la contratacion.`);
+  }
+}
 
-    if (resultado) {
-    paseadorVerContratacionesPendientes();//Refresca la tabla
-     alert(`La contratacion fue aceptada con exito.`);
-    }else{
-        alert(`No se pudo aceptar la contratacion.`);
-    }
- }
-
-function paseadorVerPerrosAsignados(){
-
-    document.querySelector(`#divPaginaPaseador`).style.display = `none`;
-    document.querySelector("#divContratacionesPendientesPaseador").style.display =
+function paseadorVerPerrosAsignados() {
+  document.querySelector(`#divPaginaPaseador`).style.display = `none`;
+  document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "none";
-    document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `block`;
-    
-    let perrosAsignados = SISTEMA.obtenerPerrosAsignadosDelPaseador(
-        SISTEMA.usuarioLogueado
-    );
-    let rows = "";
-    for (let i = 0; i < perrosAsignados.length; i++) {
-        let item = perrosAsignados[i];
-        rows += `<tr>
+    document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
+  document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `block`;
+
+  let perrosAsignados = SISTEMA.obtenerPerrosAsignadosDelPaseador(
+    SISTEMA.usuarioLogueado
+  );
+  let rows = "";
+  let cuposOcupados = 0;
+  for (let i = 0; i < perrosAsignados.length; i++) {
+    let item = perrosAsignados[i];
+    rows += `<tr>
                 <td>${item.nombre}</td>
                 <td>${item.tamanho}</td>
                 <td>${item.duenho.nombre}</td>
             </tr>`;
-    }
-    document.querySelector(`#tPerrosAsignadosPaseador`).innerHTML = rows;
-}
+    cuposOcupados += SISTEMA.obtenerCupoSegunTamanho(item.tamanho);
+  }
+  document.querySelector(`#tPerrosAsignadosPaseador`).innerHTML = rows;
 
+  let divResumen = document.querySelector("#divResumenCuposPaseador");
+  let cuposMaximos = SISTEMA.usuarioLogueado.cupos + cuposOcupados;
+  let porcentaje = 0;
+  if (cuposMaximos > 0) {
+    porcentaje = (cuposOcupados / cuposMaximos) * 100;
+  }
+
+  if (perrosAsignados.length === 0) {
+    divResumen.innerHTML = `<p>No hay perros asignados.</p>`;
+  } else {
+    divResumen.innerHTML = `<p>Cupos ocupados: ${cuposOcupados} de ${cuposMaximos} (${porcentaje.toFixed(
+      2
+    )}%)</p>`;
+  }
+}

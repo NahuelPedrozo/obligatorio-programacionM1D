@@ -118,7 +118,7 @@ class Sistema {
     return (
       tieneNumero &&
       tieneCaracterEspecial &&
-      pPass.length >= 8 &&
+      pPass.length >= 5 &&
       tieneMayuscula &&
       tieneMinuscula
     );
@@ -195,7 +195,7 @@ class Sistema {
 
     if (!this.esUnPasswordValido(pPassword)) {
       errores +=
-        "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 8 de largo como minimo.";
+        "<br> El password tiene que tener al menos 1 numero, 1 caracter especial y 5 de largo como minimo.";
     }
 
     if (!pEsPaseador) {
@@ -718,7 +718,7 @@ return perrosAsignados;
       )
     );
 
-    this.usuarios[this.usuarios.length - 1].cupos = 1;
+    /* this.usuarios[this.usuarios.length - 1].cupos = 1; */
 
     console.log(
       usuarioAgregadoLinea++,
@@ -734,7 +734,7 @@ return perrosAsignados;
       )
     );
 
-    this.usuarios[this.usuarios.length - 1].cupos = 5;
+   /*  this.usuarios[this.usuarios.length - 1].cupos = 5; */
 
     console.log(
       usuarioAgregadoLinea++,
@@ -750,7 +750,7 @@ return perrosAsignados;
       )
     );
 
-    this.usuarios[this.usuarios.length - 1].cupos = 3;
+  /*   this.usuarios[this.usuarios.length - 1].cupos = 3; */
 
     console.log(
       usuarioAgregadoLinea++,
@@ -778,6 +778,6 @@ return perrosAsignados;
         null
       )
     );
-    this.usuarios[this.usuarios.length - 1].cupos = 100;
+   /*  this.usuarios[this.usuarios.length - 1].cupos = 100; */
   }
 }
