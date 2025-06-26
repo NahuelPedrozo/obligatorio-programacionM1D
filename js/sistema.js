@@ -264,8 +264,7 @@ class Sistema {
             return `No se puede contratar un perro grande con un perro chico o viceversa.`
         } */
 
-    this.actualizarCuposPaseador(perro.tamanho, paseador);
-
+   
     let nueva = new Contratacion(perro, paseador);
     this.contrataciones.push(nueva);
     this.rechazarContratacionesIncompatibles(nueva, paseador);
@@ -391,6 +390,8 @@ class Sistema {
     let contratacion = this.buscarContratacionPorId(idContratacion);
     if (contratacion !== null && contratacion.estado === `pendiente`){
         contratacion.estado = `aceptado`;
+        // Restamos los cupos del paseador
+        this.actualizarCuposPaseador(contratacion.perro.tamanho, contratacion.paseador);
         return true;
     }
     return false; // Si no se encuentra la contratación o no está pendiente, retorna false
