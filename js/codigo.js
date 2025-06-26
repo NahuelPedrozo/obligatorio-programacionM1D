@@ -40,9 +40,6 @@ document
   .querySelector(`#btnVerPaseadoresDisponibles`)
   .addEventListener(`click`, verPaseadoresDisponibles);
 document
-  .querySelector("#btnVerListadoDePaseadores")
-  .addEventListener("click", verListadoDePaseadores);
-document
   .querySelector("#btnVerContratacionPendiente")
   .addEventListener("click", verContratacionesPendientes);
 document
@@ -124,7 +121,6 @@ function logout() {
   document.querySelector("#divPaginaPaseador").style.display = "none";
   document.querySelector("#divRegistro").style.display = "none";
   document.querySelector(`#divVerPaseadores`).style.display = `none`;
-  document.querySelector("#btnVerListadoDePaseadores").style.display = "none";
   document.querySelector("#btnPaseadorContratacionesPendiente").style.display =
     "none";
   document.querySelector("#btnPaseadorPerrosAsignados").style.display = "none";
@@ -160,7 +156,6 @@ function iniciarAplicacion() {
   document.querySelector("#divRegistro").style.display = "none";
   document.querySelector("#navPrincipal").style.display = "none";
   document.querySelector(`#divVerPaseadores`).style.display = `none`;
-  document.querySelector("#btnVerListadoDePaseadores").style.display = "none";
   document.querySelector("#btnPaseadorContratacionesPendiente").style.display =
     "none";
   document.querySelector("#btnPaseadorPerrosAsignados").style.display = "none";
@@ -184,7 +179,7 @@ function loginExitoso(pNombre) {
   document.querySelector("#txtLoginUsuario").value = "";
   document.querySelector("#divLogin").style.display = "none";
   document.querySelector("#navPrincipal").style.display = "block";
-  document.querySelector("#btnVerListadoDePaseadores").style.display = "block";
+
 
   let botonesUsuarios = document.querySelectorAll(`.nav-usuario`);
   let botonesPaseadores = document.querySelectorAll(`.nav-paseador`);
@@ -209,8 +204,7 @@ function loginExitoso(pNombre) {
 
   if (SISTEMA.esPaseador(pNombre)) {
     document.querySelector("#divPaginaPaseador").style.display = "block";
-    document.querySelector("#btnVerListadoDePaseadores").style.display =
-      "block";
+
     document.querySelector(
       "#btnPaseadorContratacionesPendiente"
     ).style.display = "block";
@@ -425,7 +419,6 @@ function paseadorVerContratacionesPendientes() {
     }
   }
 
-
   document.querySelector(`#tContratacionesPendientesPaseador`).innerHTML = rows;
   darEventoCancelarContrataciones();
   darEventoAceptarContrataciones();
@@ -442,7 +435,6 @@ function darEventoAceptarContrataciones() {
   }
 
 }
-
 
 function aceptarContratacion() {
 
