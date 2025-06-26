@@ -43,7 +43,7 @@ class Perro {
  */
 
 let ultimoIdContratacion = 1;
-
+//hola
 class Contratacion {
   constructor(perro, paseador, estado = "pendiente") {
     this.id = ultimoIdContratacion++;

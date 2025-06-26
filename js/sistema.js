@@ -776,7 +776,7 @@ class Sistema {
         null
       )
     );
-
+//hola
     let matias = this.usuarios[this.usuarios.length - 1];
     matias.cupos = 8;
 

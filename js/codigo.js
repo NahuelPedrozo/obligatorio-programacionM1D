@@ -259,7 +259,7 @@ function cargarTablaPaseadores() {
   let perroDelUsuario = SISTEMA.buscarPerroPorDuenho(
     usuarioLogueadoEnSistema.id
   );
-
+//hola.
   let cuposQueOcupaElPerro = SISTEMA.obtenerCupoSegunTamanho(
     perroDelUsuario.tamanho
   );
