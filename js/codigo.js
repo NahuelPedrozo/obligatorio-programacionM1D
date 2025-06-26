@@ -48,7 +48,9 @@ document
 document
   .querySelector(`#btnPaseadorContratacionesPendiente`)
   .addEventListener(`click`, paseadorVerContratacionesPendientes);
-  document.querySelector(`#btnListadoPaseadores`).addEventListener(`click`, listadoDePaseadores);
+document
+  .querySelector(`#btnListadoPaseadores`)
+  .addEventListener(`click`, listadoDePaseadores);
 
 function Login() {
   //Limpia ERRORES
@@ -169,9 +171,8 @@ function iniciarAplicacion() {
   document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "none";
   document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
-   document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
+  document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
 }
-
 
 /**
  * TEST - github
@@ -246,7 +247,7 @@ function verPaseadoresDisponibles() {
   document.querySelector(
     `#divVerContratacionesPendientes`
   ).style.display = `none`;
-    document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
+  document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
   cargarTablaPaseadores(); // Llena la tabla
 }
 
@@ -291,14 +292,11 @@ function darEventoContratar() {
   }
 }
 
-let mailLogueado = document.querySelector("#txtLoginUsuario").value;
-let usuarioLogueado = SISTEMA.buscarUnUsuarioPorMail(mailLogueado);
-
 // Realiza la contratacion entre un paseador y el perro del usuario logueado
 function contratarPaseador() {
   let idPaseador = Number(this.getAttribute("data-paseador"));
   let paseador = null;
-  if (usuarioLogueado === null) {
+  if (SISTEMA.usuarioLogueado === null) {
     alert("No se pudo encontrar el usuario logueado.");
     return;
   }
@@ -312,7 +310,7 @@ function contratarPaseador() {
   for (let i = 0; i < SISTEMA.contrataciones.length; i++) {
     let item = SISTEMA.contrataciones[i];
     if (
-      item.perro.duenho.id === usuarioLogueado.id &&
+      item.perro.duenho.id === SISTEMA.usuarioLogueado.id &&
       item.estado === "pendiente"
     ) {
       alert(
@@ -323,7 +321,9 @@ function contratarPaseador() {
   }
 
   // Buscar perro del usuario
-  let perroDelUsuario = SISTEMA.buscarPerroPorDuenho(usuarioLogueado.id);
+  let perroDelUsuario = SISTEMA.buscarPerroPorDuenho(
+    SISTEMA.usuarioLogueado.id
+  );
 
   // Validar que el cliente tiene perro
   if (perroDelUsuario === null) {
@@ -343,24 +343,26 @@ function contratarPaseador() {
 
 // Tabla de todos los paseadores (pagina-usuario)
 
-function listadoDePaseadores(){
-document.querySelector(`#divListadoDePaseadores`).style.display = `block`;
-document.querySelector(`#divVerPaseadores`).style.display = `none`;
-document.querySelector(`#divVerContratacionesPendientes`).style.display = `none`;
-document.querySelector(`#divPaginaUsuario`).style.display = `none`;
-    let paseadores = SISTEMA.obtenerSoloPaseadores();
-    
-    let rows = "";
-    for (let i = 0; i < paseadores.length; i++) {
-        let item = paseadores[i];
-          let perrosAsignados = SISTEMA.obtenerPerrosAsignadosDelPaseador(item).length;
-        rows += `<tr>
+function listadoDePaseadores() {
+  document.querySelector(`#divListadoDePaseadores`).style.display = `block`;
+  document.querySelector(`#divVerPaseadores`).style.display = `none`;
+  document.querySelector(
+    `#divVerContratacionesPendientes`
+  ).style.display = `none`;
+  document.querySelector(`#divPaginaUsuario`).style.display = `none`;
+  let paseadores = SISTEMA.obtenerSoloPaseadores();
+
+  let rows = "";
+  for (let i = 0; i < paseadores.length; i++) {
+    let item = paseadores[i];
+    let perrosAsignados =
+      SISTEMA.obtenerPerrosAsignadosDelPaseador(item).length;
+    rows += `<tr>
                 <td>${item.nombre}</td>
                 <td>${perrosAsignados}</td>
             </tr>`;
-    }
-    document.querySelector("#tListadoPaseadores").innerHTML = rows;
-
+  }
+  document.querySelector("#tListadoPaseadores").innerHTML = rows;
 }
 
 function verContratacionesPendientes() {
@@ -388,6 +390,14 @@ function verContratacionesPendientes() {
             <td>${item.paseador.nombre}</td>
             <td>${item.perro.nombre}</td>
             <td>${item.estado}</td>
+             <td></td>
+        </tr>`;
+    } else {
+      rows += `<tr>
+            <td>${item.paseador.nombre}</td>
+            <td>${item.perro.nombre}</td>
+            <td>${item.estado}</td>
+             <td>${item.motivo}</td>
         </tr>`;
     }
   }
@@ -479,7 +489,7 @@ function paseadorVerPerrosAsignados() {
   document.querySelector(`#divPaginaPaseador`).style.display = `none`;
   document.querySelector("#divContratacionesPendientesPaseador").style.display =
     "none";
-    document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
+  document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
   document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `block`;
 
   let perrosAsignados = SISTEMA.obtenerPerrosAsignadosDelPaseador(

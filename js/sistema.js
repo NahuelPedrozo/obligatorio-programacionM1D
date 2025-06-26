@@ -247,12 +247,8 @@ class Sistema {
   //Realizamos la contratacion
   crearContratacion(perro, paseador) {
     let cupoNecesario = this.obtenerCupoSegunTamanho(perro.tamanho);
-    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let cuposRestantes = paseador.cupos;
     let tipoPermitido = this.tipoDePerrosPendientes(paseador);
-
-    if (tipoPermitido !== null && tipoPermitido !== perro.tamanho) {
-      return "No se puede contratar: ya hay perros de otro tamaño asignados.";
-    }
 
     if (cupoNecesario > cuposRestantes) {
       return "No hay cupos suficientes.";
@@ -264,10 +260,9 @@ class Sistema {
             return `No se puede contratar un perro grande con un perro chico o viceversa.`
         } */
 
-   
     let nueva = new Contratacion(perro, paseador);
     this.contrataciones.push(nueva);
-    this.rechazarContratacionesIncompatibles(nueva, paseador);
+    //    this.rechazarContratacionesIncompatibles(nueva, paseador);
     return ""; // éxito
   }
 
@@ -278,8 +273,11 @@ class Sistema {
   obtenerTamanhos(paseador) {
     let tamanhos = [];
     for (let i = 0; i < this.contrataciones.length; i++) {
-      if (this.contrataciones[i].paseador === paseador) {
-        let tamanhoAgregar = this.contrataciones[i].paseador.perro.tamanho;
+      if (
+        this.contrataciones[i].paseador === paseador &&
+        this.contrataciones[i].estado === "aceptado"
+      ) {
+        let tamanhoAgregar = this.contrataciones[i].perro.tamanho;
         // Reemplazo de includes por verificación manual
         let yaExiste = false;
         for (let i = 0; i < tamanhos.length; i++) {
@@ -302,21 +300,6 @@ class Sistema {
     if (tam === "tamanhoM") return 2;
     if (tam === "tamanhoG") return 4;
     return 0;
-  }
-
-  cuposYaOcupados(paseador) {
-    let total = 0;
-    for (let i = 0; i < this.contrataciones.length; i++) {
-      if (
-        this.contrataciones[i].paseador === paseador &&
-        this.contrataciones[i].estado === "pendiente"
-      ) {
-        total += this.obtenerCupoSegunTamanho(
-          this.contrataciones[i].perro.tamanho
-        );
-      }
-    }
-    return total;
   }
 
   tipoDePerrosPendientes(paseador) {
@@ -351,7 +334,7 @@ class Sistema {
   }
 
   rechazarContratacionesIncompatibles(contratacionActual, paseador) {
-    let cuposRestantes = paseador.cupos - this.cuposYaOcupados(paseador);
+    let cuposRestantes = paseador.cupos;
     let tipo = this.tipoDePerrosPendientes(paseador);
 
     for (let i = 0; i < this.contrataciones.length; i++) {
@@ -361,11 +344,22 @@ class Sistema {
           this.contrataciones[i].estado === "pendiente"
         ) {
           if (
-            this.contrataciones[i].perro.tamanho !== tipo ||
             this.obtenerCupoSegunTamanho(this.contrataciones[i].perro.tamanho) >
-              cuposRestantes
+            cuposRestantes
           ) {
             this.contrataciones[i].estado = "rechazada";
+            this.contrataciones[i].motivo =
+              "Rechazada por incompatibilidad de cupos";
+          }
+          if (
+            !this.validarTamanhoPerro(
+              this.contrataciones[i].perro.tamanho,
+              this.obtenerTamanhos(paseador)
+            )
+          ) {
+            this.contrataciones[i].estado = "rechazada";
+            this.contrataciones[i].motivo =
+              "Rechazada por incompatibilidad de tamaño";
           }
         }
       }
@@ -374,29 +368,32 @@ class Sistema {
 
   cancelarContratacion(idContratacion) {
     let contratacion = this.buscarContratacionPorId(idContratacion);
-    if (contratacion !== null) {
+    if (contratacion !== null && contratacion.estado === `pendiente`) {
       contratacion.estado = "cancelada";
-      let cupoNecesario = this.obtenerCupoSegunTamanho(
-        contratacion.perro.tamanho
-      );
-      contratacion.paseador.cupos += cupoNecesario;
       return true;
     }
 
     return false; // Si no se encuentra la contratación, retorna false
   }
 
-  aceptarContrataciones (idContratacion){
+  aceptarContrataciones(idContratacion) {
     let contratacion = this.buscarContratacionPorId(idContratacion);
-    if (contratacion !== null && contratacion.estado === `pendiente`){
-        contratacion.estado = `aceptado`;
-        // Restamos los cupos del paseador
-        this.actualizarCuposPaseador(contratacion.perro.tamanho, contratacion.paseador);
-        return true;
+    if (contratacion !== null && contratacion.estado === `pendiente`) {
+      contratacion.estado = `aceptado`;
+      // Restamos los cupos del paseador
+      this.actualizarCuposPaseador(
+        contratacion.perro.tamanho,
+        contratacion.paseador
+      );
+      this.rechazarContratacionesIncompatibles(
+        contratacion,
+        contratacion.paseador
+      );
+      // Retornamos true para indicar que la contratación fue aceptada
+      return true;
     }
     return false; // Si no se encuentra la contratación o no está pendiente, retorna false
-}
-
+  }
 
   buscarContratacionPorId(idContratacion) {
     let contratacionEncontrada = null;
@@ -411,28 +408,28 @@ class Sistema {
     return contratacionEncontrada;
   }
 
-obtenerContratacionesDelPaseador (paseador) {
+  obtenerContratacionesDelPaseador(paseador) {
     let contratacionesDelPaseador = [];
     for (let i = 0; i < this.contrataciones.length; i++) {
       if (this.contrataciones[i].paseador.id === paseador.id) {
         contratacionesDelPaseador.push(this.contrataciones[i]);
       }
-    } return contratacionesDelPaseador;
-}
-
-obtenerPerrosAsignadosDelPaseador (paseador){
-    let perrosAsignados = [];
-    for (let i = 0; i < this.contrataciones.length; i++){
-        if (this.contrataciones[i].paseador.id === paseador.id &&
-            this.contrataciones[i].estado === `aceptado`
-        ){
-        perrosAsignados.push(this.contrataciones[i].perro);
     }
-}
-return perrosAsignados;
-}
+    return contratacionesDelPaseador;
+  }
 
-
+  obtenerPerrosAsignadosDelPaseador(paseador) {
+    let perrosAsignados = [];
+    for (let i = 0; i < this.contrataciones.length; i++) {
+      if (
+        this.contrataciones[i].paseador.id === paseador.id &&
+        this.contrataciones[i].estado === `aceptado`
+      ) {
+        perrosAsignados.push(this.contrataciones[i].perro);
+      }
+    }
+    return perrosAsignados;
+  }
 
   /* 
     ESTE METODO PRECARGA LOS DATOS DE LA APLICACION.
@@ -456,6 +453,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoFirulais = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -468,6 +468,9 @@ return perrosAsignados;
         "Max",
         "tamanhoG"
       )
+    );
+    let perroGrandeMax = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -482,6 +485,9 @@ return perrosAsignados;
         "tamanhoC"
       )
     );
+    let perroChicoLuna = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -494,6 +500,9 @@ return perrosAsignados;
         "Rocky",
         "tamanhoG"
       )
+    );
+    let perroGrandeRocky = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -508,6 +517,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoNina = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -520,6 +532,9 @@ return perrosAsignados;
         "Toby",
         "tamanhoC"
       )
+    );
+    let perroChicoToby = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -534,6 +549,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoMaya = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -546,6 +564,9 @@ return perrosAsignados;
         "Simba",
         "tamanhoG"
       )
+    );
+    let perroGrandeSimba = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -560,6 +581,9 @@ return perrosAsignados;
         "tamanhoC"
       )
     );
+    let perroChicoLola = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -572,6 +596,9 @@ return perrosAsignados;
         "Thor",
         "tamanhoG"
       )
+    );
+    let perroGrandeThor = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -586,6 +613,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoMilo = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -598,6 +628,9 @@ return perrosAsignados;
         "Zeus",
         "tamanhoC"
       )
+    );
+    let perroChicoZeus = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -612,6 +645,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoDaisy = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -624,6 +660,9 @@ return perrosAsignados;
         "Balto",
         "tamanhoG"
       )
+    );
+    let perroGrandeBalto = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -638,6 +677,9 @@ return perrosAsignados;
         "tamanhoC"
       )
     );
+    let perroChicoChispa = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -650,6 +692,9 @@ return perrosAsignados;
         "Jazz",
         "tamanhoM"
       )
+    );
+    let perroMedianoJazz = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -664,6 +709,9 @@ return perrosAsignados;
         "tamanhoG"
       )
     );
+    let perroGrandeTango = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -676,6 +724,9 @@ return perrosAsignados;
         "Loki",
         "tamanhoC"
       )
+    );
+    let perroChico = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
     console.log(
       usuarioAgregadoLinea++,
@@ -690,6 +741,9 @@ return perrosAsignados;
         "tamanhoM"
       )
     );
+    let perroMedianoCoco = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
+    );
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -702,6 +756,10 @@ return perrosAsignados;
         "Osito",
         "tamanhoG"
       )
+    );
+
+    let perroGrandeOsito = this.buscarPerroPorDuenho(
+      this.usuarios[this.usuarios.length - 1].id
     );
 
     /** Precargo paseadores (sin perro ni tamaño) */
@@ -719,8 +777,23 @@ return perrosAsignados;
       )
     );
 
-    /* this.usuarios[this.usuarios.length - 1].cupos = 1; */
+    let matias = this.usuarios[this.usuarios.length - 1];
+    matias.cupos = 8;
 
+    this.crearContratacion(perroGrandeBalto, matias);
+    this.crearContratacion(perroGrandeMax, matias);
+    this.crearContratacion(perroGrandeOsito, matias);
+
+    this.crearContratacion(perroMedianoCoco, matias);
+
+    this.crearContratacion(perroMedianoJazz, matias);
+
+    this.crearContratacion(perroMedianoNina, matias);
+
+    this.crearContratacion(perroChico, matias);
+    this.crearContratacion(perroChicoChispa, matias);
+    this.crearContratacion(perroChicoLuna, matias);
+    this.crearContratacion(perroGrandeSimba, matias);
     console.log(
       usuarioAgregadoLinea++,
       " ",
@@ -735,7 +808,7 @@ return perrosAsignados;
       )
     );
 
-   /*  this.usuarios[this.usuarios.length - 1].cupos = 5; */
+    /*  this.usuarios[this.usuarios.length - 1].cupos = 5; */
 
     console.log(
       usuarioAgregadoLinea++,
@@ -751,7 +824,7 @@ return perrosAsignados;
       )
     );
 
-  /*   this.usuarios[this.usuarios.length - 1].cupos = 3; */
+    /*   this.usuarios[this.usuarios.length - 1].cupos = 3; */
 
     console.log(
       usuarioAgregadoLinea++,
@@ -779,6 +852,6 @@ return perrosAsignados;
         null
       )
     );
-   /*  this.usuarios[this.usuarios.length - 1].cupos = 100; */
+    /*  this.usuarios[this.usuarios.length - 1].cupos = 100; */
   }
 }
