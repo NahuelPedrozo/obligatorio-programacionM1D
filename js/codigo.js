@@ -132,7 +132,7 @@ function logout() {
     "none";
   document.querySelector(`#divPerrosAsignadosPaseador`).style.display = `none`;
   document.querySelector(`#divListadoDePaseadores`).style.display = `none`;
-  document.querySelector("#btnListadoPaseadores").style.display = "none";
+  // document.querySelector("#btnListadoPaseadores").style.display = "none";
 
   let botonesUsuario = document.querySelectorAll(".nav-usuario");
   let botonesPaseador = document.querySelectorAll(".nav-paseador");
@@ -353,9 +353,10 @@ document.querySelector(`#divPaginaUsuario`).style.display = `none`;
     let rows = "";
     for (let i = 0; i < paseadores.length; i++) {
         let item = paseadores[i];
+          let perrosAsignados = SISTEMA.obtenerPerrosAsignadosDelPaseador(item).length;
         rows += `<tr>
                 <td>${item.nombre}</td>
-                <td>${item.cupos}</td>
+                <td>${perrosAsignados}</td>
             </tr>`;
     }
     document.querySelector("#tListadoPaseadores").innerHTML = rows;
